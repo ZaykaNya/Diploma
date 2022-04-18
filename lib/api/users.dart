@@ -1,62 +1,70 @@
 import 'dart:convert';
+import 'package:diplom/models/user.dart';
+import 'package:diplom/models/log.dart';
 import 'package:http/http.dart' as http;
 
-Future<http.Response> fetchAllUsers() {
-  return http.get(Uri.parse('http://semantic-portal.net/log/api/user'),
-      headers: {"Access-Control-Allow-Origin": "*"});
-}
+/// Fetches all users
+Future<List<UserInfo>> fetchAllUsers() async {
+  final response =
+      await http.get(Uri.parse('http://semantic-portal.net/log/api/user'));
 
-Future<http.Response> fetchUserDetailsById(id) {
-  return http.get(
-      Uri.parse('http://semantic-portal.net/log/api/user/$id/details'),
-      headers: {"Access-Control-Allow-Origin": "*"});
-}
+  if (response.statusCode == 200) {
+    final parsed = json.decode(response.body).cast<Map<String, dynamic>>();
 
-Future<http.Response> fetchUserLogsById(id) {
-  return http.get(Uri.parse('http://semantic-portal.net/log/api/user/$id'),
-      headers: {"Access-Control-Allow-Origin": "*"});
-}
-
-Future<http.Response> fetchUserLogsFromTime(id, time) {
-  return http.get(
-      Uri.parse('http://semantic-portal.net/log/api/user/$id/from/$time'),
-      headers: {"Access-Control-Allow-Origin": "*"});
-}
-
-Future<http.Response> fetchUserLogsBetweenTime(id, time1, time2) {
-  return http.get(
-      Uri.parse(
-          'http://semantic-portal.net/log/api/user/$id/between/$time1/$time2'),
-      headers: {"Access-Control-Allow-Origin": "*"});
-}
-
-class Album {
-  final int userId;
-  final int id;
-  final String title;
-
-  const Album({
-    required this.userId,
-    required this.id,
-    required this.title,
-  });
-
-  factory Album.fromJson(Map<String, dynamic> json) {
-    return Album(
-      userId: json['userId'],
-      id: json['id'],
-      title: json['title'],
-    );
+    return parsed.map<UserInfo>((json) => UserInfo.fromMap(json)).toList();
+  } else {
+    throw Exception("Failed to fetch all users");
   }
 }
 
-Future<Album> fetchTestData() async {
+/// Fetches specific user by id
+Future<User> fetchUserDetailsById(id) async {
   final response = await http
-      .get(Uri.parse('https://jsonplaceholder.typicode.com/albums/1'));
+      .get(Uri.parse('http://semantic-portal.net/log/api/user/$id/details'));
 
   if (response.statusCode == 200) {
-    return Album.fromJson(jsonDecode(response.body));
+    return User.fromJson(jsonDecode(response.body));
   } else {
-    throw Exception('Failed to load test data');
+    throw Exception("Failed to fetch user by id $id");
+  }
+}
+
+/// Fetches all logs of user by user id
+Future<List<UserLog>> fetchUserLogsById(id) async {
+  final response =
+      await http.get(Uri.parse('http://semantic-portal.net/log/api/user/$id'));
+
+  if (response.statusCode == 200) {
+    final parsed = json.decode(response.body).cast<Map<String, dynamic>>();
+
+    return parsed.map<UserLog>((json) => UserLog.fromMap(json)).toList();
+  } else {
+    throw Exception("Failed to fetch user logs by id $id");
+  }
+}
+
+Future<List<UserLog>> fetchUserLogsFromTime(id, time) async {
+  final response = await http
+      .get(Uri.parse('http://semantic-portal.net/log/api/user/$id/from/$time'));
+
+  if (response.statusCode == 200) {
+    final parsed = json.decode(response.body).cast<Map<String, dynamic>>();
+
+    return parsed.map<UserLog>((json) => UserLog.fromMap(json)).toList();
+  } else {
+    throw Exception("Failed to fetch user logs by id $id");
+  }
+}
+
+Future<List<UserLog>> fetchUserLogsBetweenTime(id, time1, time2) async {
+  final response = await http.get(Uri.parse(
+      'http://semantic-portal.net/log/api/user/$id/between/$time1/$time2'));
+
+  if (response.statusCode == 200) {
+    final parsed = json.decode(response.body).cast<Map<String, dynamic>>();
+
+    return parsed.map<UserLog>((json) => UserLog.fromMap(json)).toList();
+  } else {
+    throw Exception("Failed to fetch user logs by id $id");
   }
 }

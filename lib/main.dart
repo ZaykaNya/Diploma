@@ -1,6 +1,9 @@
+import 'package:diplom/api/users.dart';
+import 'package:diplom/models/user.dart';
+import 'package:diplom/models/log.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
-import 'api/users.dart';
+
 
 void main() {
   runApp(const MyApp());
@@ -51,7 +54,7 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
   int _counter = 0;
-  late Future<Album> futureAlbum;
+  late Future<List<UserLog>> futureAlbum;
 
   void _incrementCounter() {
     setState(() {
@@ -62,12 +65,13 @@ class _MyHomePageState extends State<MyHomePage> {
       // called again, and so nothing would appear to happen.
       _counter++;
     });
+    print(fetchUserLogsById(140));
   }
 
   @override
   void initState() {
     super.initState();
-    futureAlbum = fetchTestData();
+    futureAlbum = fetchUserLogsFromTime(140, 0);
   }
 
 
@@ -112,11 +116,11 @@ class _MyHomePageState extends State<MyHomePage> {
               '$_counter',
               style: Theme.of(context).textTheme.headline4,
             ),
-            FutureBuilder<Album>(
+            FutureBuilder<List<UserLog>>(
               future: futureAlbum,
               builder: (context, snapshot) {
                 if (snapshot.hasData) {
-                  return Text("${snapshot.data!.id}");
+                  return Text("${snapshot.data?[0].id}");
                 } else if (snapshot.hasError) {
                   return Text('${snapshot.error}');
                 }
