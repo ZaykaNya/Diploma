@@ -4,13 +4,13 @@ List<UserLog> postFromJson(String str) =>
     List<UserLog>.from(json.decode(str).map((x) => UserLog.fromMap(x)));
 
 class UserLog {
-  final String id;
-  final String userId;
-  final String contentType;
-  final String contentId;
-  final String event;
-  final String time;
-  final String seconds;
+  final String? id;
+  final String? userId;
+  final String? contentType;
+  final String? contentId;
+  final String? event;
+  final String? time;
+  final String? seconds;
   final String? parentLog;
   final String? status;
   final String? lastTime;

@@ -43,6 +43,7 @@ Future<List<UserLog>> fetchUserLogsById(id) async {
   }
 }
 
+/// Fetches user logs from selected time by user id
 Future<List<UserLog>> fetchUserLogsFromTime(id, time) async {
   final response = await http
       .get(Uri.parse('http://semantic-portal.net/log/api/user/$id/from/$time'));
@@ -56,6 +57,7 @@ Future<List<UserLog>> fetchUserLogsFromTime(id, time) async {
   }
 }
 
+/// Fetches user logs between selected time by user id
 Future<List<UserLog>> fetchUserLogsBetweenTime(id, time1, time2) async {
   final response = await http.get(Uri.parse(
       'http://semantic-portal.net/log/api/user/$id/between/$time1/$time2'));
