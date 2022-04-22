@@ -1,6 +1,9 @@
+import 'package:diplom/api/tests.dart';
 import 'package:diplom/api/users.dart';
 import 'package:diplom/api/logs.dart';
 import 'package:diplom/api/courses.dart';
+import 'package:diplom/models/test.dart';
+import 'package:diplom/models/mark.dart';
 import 'package:diplom/models/user.dart';
 import 'package:diplom/models/log.dart';
 import 'package:diplom/models/course.dart';
@@ -57,7 +60,7 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
   int _counter = 0;
-  late Future<Course> futureAlbum;
+  late Future<Mark> futureAlbum;
 
   void _incrementCounter() {
     setState(() {
@@ -68,13 +71,13 @@ class _MyHomePageState extends State<MyHomePage> {
       // called again, and so nothing would appear to happen.
       _counter++;
     });
-    print(fetchCoursesByName('javascript-basics'));
+    print(fetchAllTests());
   }
 
   @override
   void initState() {
     super.initState();
-    futureAlbum = fetchCoursesByName('javascript-basics');
+    futureAlbum = fetchUserBestBranchMarkById(180, 'dart-tour-generics');
   }
 
 
@@ -119,11 +122,11 @@ class _MyHomePageState extends State<MyHomePage> {
               '$_counter',
               style: Theme.of(context).textTheme.headline4,
             ),
-            FutureBuilder<Course>(
+            FutureBuilder<Mark>(
               future: futureAlbum,
               builder: (context, snapshot) {
                 if (snapshot.hasData) {
-                  return Text("${snapshot.data!.branches[1]}");
+                  return Text("${snapshot.data!.mark}");
                 } else if (snapshot.hasError) {
                   return Text('${snapshot.error}');
                 }
