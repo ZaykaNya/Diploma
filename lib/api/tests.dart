@@ -59,6 +59,7 @@ Future<List<Test>> fetchTestsByUserId(id) async {
   }
 }
 
+/// Fetches specific user best course test mark by user id and course
 Future<Mark> fetchUserBestCourseMarkById(id, course) async {
   final response = await http
       .get(Uri.parse('http://semantic-portal.net/api/test-results/user/$id/course/$course/mark'));
@@ -70,6 +71,7 @@ Future<Mark> fetchUserBestCourseMarkById(id, course) async {
   }
 }
 
+/// Fetches specific user best branch test mark by user id and branch
 Future<Mark> fetchUserBestBranchMarkById(id, branch) async {
   final response = await http
       .get(Uri.parse('http://semantic-portal.net/api/test-results/user/$id/branch/$branch/mark'));
