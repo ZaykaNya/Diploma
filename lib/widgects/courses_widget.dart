@@ -14,18 +14,32 @@ class Courses extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-        padding: const EdgeInsets.all(4),
+        padding: const EdgeInsets.all(0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
-          children: const [
-            Padding(padding: EdgeInsets.fromLTRB(12, 16, 8, 16),
-                child: Text("Your courses", style: TextStyle(
-                    fontSize: 24,
-                    fontWeight: FontWeight.w700,
-                    color: Color.fromRGBO(93, 92, 99, 1)))),
-            Course(),
-            Course(),
-            Course(),
+          children: [
+            const Divider(
+              height: 10,
+              thickness: 10,
+              color: Color.fromRGBO(218, 220, 239, 1),
+            ),
+            const Padding(
+                padding: EdgeInsets.fromLTRB(16, 24, 16, 24),
+                child: Text("Your courses",
+                    style: TextStyle(
+                        fontSize: 24,
+                        fontWeight: FontWeight.w700,
+                        color: Color.fromRGBO(93, 92, 99, 1)))),
+            Padding(
+              padding: const EdgeInsets.fromLTRB(8, 0, 8, 0),
+              child: Column(
+                children: const [
+                  Course(),
+                  Course(),
+                  Course(),
+                ],
+              ),
+            )
           ],
         ));
   }
