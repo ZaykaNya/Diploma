@@ -6,6 +6,7 @@ import 'package:diplom/widgects/profile.dart';
 import 'package:diplom/widgects/achievements_widget.dart';
 import 'package:diplom/widgects/courses_widget.dart';
 import 'package:diplom/widgects/history_widget.dart';
+import 'package:diplom/widgects/average_dashboard_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -60,7 +61,8 @@ class _HomePageState extends State<HomePage> {
           mainAxisSize: MainAxisSize.min,
           children: <Widget>[
             const Profile(),
-            const Achievements(),
+            const AverageDashboard(),
+            const Courses(),
             Builder(
               builder: (context) {
                 final userId = context.select(

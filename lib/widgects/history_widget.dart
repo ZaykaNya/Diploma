@@ -2,7 +2,7 @@ import 'dart:ui';
 
 import 'package:flutter/material.dart';
 
-import 'history_row_widjet.dart';
+import 'history_row_widget.dart';
 
 class History extends StatelessWidget {
   const History({Key? key}) : super(key: key);
