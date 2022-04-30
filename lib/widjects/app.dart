@@ -8,6 +8,7 @@ import 'package:diplom/widjects/splash.dart';
 import 'package:diplom/widjects/home_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 class App extends StatelessWidget {
   const App({
@@ -49,6 +50,11 @@ class _AppViewState extends State<AppView> {
     return MaterialApp(
       navigatorKey: _navigatorKey,
       debugShowCheckedModeBanner: false,
+      theme: ThemeData(
+        textTheme: GoogleFonts.interTextTheme(
+          Theme.of(context).textTheme,
+        )
+      ),
       builder: (context, child) {
         return BlocListener<AuthenticationBloc, AuthenticationState>(
           listener: (context, state) {

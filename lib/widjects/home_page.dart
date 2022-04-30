@@ -3,6 +3,7 @@ import 'dart:ui';
 import 'package:diplom/authentication/authentication.dart';
 import 'package:diplom/authentication/authentication_bloc.dart';
 import 'package:diplom/widjects/profile.dart';
+import 'package:diplom/widjects/achievements_widjet.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -51,50 +52,52 @@ class _HomePageState extends State<HomePage> {
           )
         ],
       ),
-      body: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: <Widget>[
-          const Profile(),
-          Builder(
-            builder: (context) {
-              final userId = context.select(
-                (AuthenticationBloc bloc) => bloc.state.user.id,
-              );
-              return Text('UserID: $userId');
-            },
-          ),
-          ElevatedButton(
-            child: const Text('Logout'),
-            onPressed: () {
-              context
-                  .read<AuthenticationBloc>()
-                  .add(AuthenticationLogoutRequested());
-            },
-          ),
-        ],
+      body: SingleChildScrollView(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: <Widget>[
+            const Profile(),
+            const Achievements(),
+            Builder(
+              builder: (context) {
+                final userId = context.select(
+                      (AuthenticationBloc bloc) => bloc.state.user.id,
+                );
+                return Text('UserID: $userId');
+              },
+            ),
+            ElevatedButton(
+              child: const Text('Logout'),
+              onPressed: () {
+                context
+                    .read<AuthenticationBloc>()
+                    .add(AuthenticationLogoutRequested());
+              },
+            ),
+          ],
+        ),
       ),
       bottomNavigationBar: BottomNavigationBar(
         items: const <BottomNavigationBarItem>[
           BottomNavigationBarItem(
             icon: Icon(Icons.search),
-            label: '',
+            label: 'Statistic',
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.add_alert),
-            label: '',
+            label: 'Progress',
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.account_circle),
-            label: '',
+            label: 'History',
           ),
         ],
         currentIndex: _selectedIndex,
-        selectedItemColor: Colors.white,
+        selectedItemColor: const Color.fromRGBO(41, 215, 41, 1),
+        // selectedItemColor: Colors.white,
         unselectedItemColor: const Color.fromRGBO(134, 137, 235, 1),
         onTap: _onItemTapped,
         backgroundColor: const Color.fromRGBO(80, 71, 153, 1),
-        showSelectedLabels: false,
-        showUnselectedLabels: false,
       ),
     );
   }
