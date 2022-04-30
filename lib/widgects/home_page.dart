@@ -2,8 +2,9 @@ import 'dart:ui';
 
 import 'package:diplom/authentication/authentication.dart';
 import 'package:diplom/authentication/authentication_bloc.dart';
-import 'package:diplom/widjects/profile.dart';
-import 'package:diplom/widjects/achievements_widjet.dart';
+import 'package:diplom/widgects/profile.dart';
+import 'package:diplom/widgects/achievements_widget.dart';
+import 'package:diplom/widgects/courses_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -57,7 +58,7 @@ class _HomePageState extends State<HomePage> {
           mainAxisSize: MainAxisSize.min,
           children: <Widget>[
             const Profile(),
-            const Achievements(),
+            const Courses(),
             Builder(
               builder: (context) {
                 final userId = context.select(

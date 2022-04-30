@@ -1,6 +1,6 @@
 import 'package:diplom/authentication/authentication_repository.dart';
 import 'package:diplom/login/login_bloc.dart';
-import 'package:diplom/widjects/login_form.dart';
+import 'package:diplom/widgects/login_form.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
