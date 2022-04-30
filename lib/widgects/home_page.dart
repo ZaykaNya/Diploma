@@ -5,6 +5,7 @@ import 'package:diplom/authentication/authentication_bloc.dart';
 import 'package:diplom/widgects/profile.dart';
 import 'package:diplom/widgects/achievements_widget.dart';
 import 'package:diplom/widgects/courses_widget.dart';
+import 'package:diplom/widgects/history_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -37,7 +38,7 @@ class _HomePageState extends State<HomePage> {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: const Color.fromRGBO(80, 71, 153, 1),
-        toolbarHeight: 56,
+        toolbarHeight: 54,
         title: const Text('Profile',
             style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold)),
         actions: <Widget>[
@@ -46,6 +47,7 @@ class _HomePageState extends State<HomePage> {
             icon: const Icon(
               Icons.settings,
               color: Colors.white,
+              size: 30,
             ),
             onPressed: () {
               // do something
@@ -58,7 +60,7 @@ class _HomePageState extends State<HomePage> {
           mainAxisSize: MainAxisSize.min,
           children: <Widget>[
             const Profile(),
-            const Courses(),
+            const Achievements(),
             Builder(
               builder: (context) {
                 final userId = context.select(

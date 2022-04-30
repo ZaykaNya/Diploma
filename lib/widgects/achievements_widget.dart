@@ -14,18 +14,30 @@ class Achievements extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-        padding: const EdgeInsets.all(4),
+        padding: const EdgeInsets.all(0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
-          children: const [
-            Padding(padding: EdgeInsets.fromLTRB(12, 16, 8, 16),
+          children: [
+            const Divider(
+              height: 10,
+              thickness: 10,
+              color: Color.fromRGBO(218, 220, 239, 1),
+            ),
+            const Padding(padding: EdgeInsets.fromLTRB(16, 16, 16, 16),
                 child: Text("Common achievements", style: TextStyle(
                     fontSize: 24,
                     fontWeight: FontWeight.w700,
                     color: Color.fromRGBO(93, 92, 99, 1)))),
-            Achievement(),
-            Achievement(),
-            Achievement(),
+            Padding(
+              padding: const EdgeInsets.fromLTRB(8, 0, 8, 0),
+              child: Column(
+                children: const [
+                  Achievement(),
+                  Achievement(),
+                  Achievement(),
+                ],
+              ),
+            )
           ],
         ));
   }
