@@ -20,7 +20,7 @@ class AverageDashboard extends StatelessWidget {
           color: Color.fromRGBO(218, 220, 239, 1),
         ),
         const Padding(
-            padding: EdgeInsets.fromLTRB(16, 16, 16, 16),
+            padding: EdgeInsets.fromLTRB(16, 24, 16, 16),
             child: Text("Average score",
                 style: TextStyle(
                     fontSize: 24,

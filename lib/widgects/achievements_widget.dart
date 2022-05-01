@@ -23,13 +23,13 @@ class Achievements extends StatelessWidget {
               thickness: 10,
               color: Color.fromRGBO(218, 220, 239, 1),
             ),
-            const Padding(padding: EdgeInsets.fromLTRB(16, 16, 16, 16),
+            const Padding(padding: EdgeInsets.fromLTRB(16, 24, 16, 16),
                 child: Text("Common achievements", style: TextStyle(
                     fontSize: 24,
                     fontWeight: FontWeight.w700,
                     color: Color.fromRGBO(93, 92, 99, 1)))),
             Padding(
-              padding: const EdgeInsets.fromLTRB(8, 0, 8, 0),
+              padding: const EdgeInsets.fromLTRB(4, 0, 4, 0),
               child: Column(
                 children: const [
                   Achievement(),
