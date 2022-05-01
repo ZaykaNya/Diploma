@@ -2,6 +2,9 @@ import 'dart:ui';
 
 import 'package:diplom/authentication/authentication.dart';
 import 'package:diplom/authentication/authentication_bloc.dart';
+import 'package:diplom/navigation/constants/nav_bar_items.dart';
+import 'package:diplom/navigation/navigation_cubit.dart';
+import 'package:diplom/navigation/navigation_state.dart';
 import 'package:diplom/widgects/profile.dart';
 import 'package:diplom/widgects/achievements_widget.dart';
 import 'package:diplom/widgects/courses_widget.dart';
@@ -61,8 +64,22 @@ class _HomePageState extends State<HomePage> {
           mainAxisSize: MainAxisSize.min,
           children: <Widget>[
             const Profile(),
-            const AverageDashboard(),
-            const Courses(),
+            BlocBuilder<NavigationCubit, NavigationState>(
+                builder: (context, state) {
+                  if (state.navbarItem == NavbarItem.statistics) {
+                    return Column(
+                      children: const [
+                        AverageDashboard(),
+                        Courses(),
+                      ],
+                    );
+                  } else if (state.navbarItem == NavbarItem.progress) {
+                    return Achievements();
+                  } else if (state.navbarItem == NavbarItem.history) {
+                    return History();
+                  }
+                  return Container();
+                }),
             Builder(
               builder: (context) {
                 final userId = context.select(
@@ -101,7 +118,19 @@ class _HomePageState extends State<HomePage> {
         selectedItemColor: const Color.fromRGBO(41, 215, 41, 1),
         // selectedItemColor: Colors.white,
         unselectedItemColor: const Color.fromRGBO(134, 137, 235, 1),
-        onTap: _onItemTapped,
+        onTap: (index) {
+          _onItemTapped(index);
+          if (index == 0) {
+            BlocProvider.of<NavigationCubit>(context)
+                .getNavBarItem(NavbarItem.statistics);
+          } else if (index == 1) {
+            BlocProvider.of<NavigationCubit>(context)
+                .getNavBarItem(NavbarItem.progress);
+          } else if (index == 2) {
+            BlocProvider.of<NavigationCubit>(context)
+                .getNavBarItem(NavbarItem.history);
+          }
+        },
         backgroundColor: const Color.fromRGBO(80, 71, 153, 1),
       ),
     );

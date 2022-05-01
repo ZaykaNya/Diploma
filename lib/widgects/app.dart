@@ -2,10 +2,11 @@ import 'package:diplom/authentication/authentication_bloc.dart';
 import 'package:diplom/authentication/authentication_repository.dart';
 import 'package:diplom/authentication/authentication_state.dart';
 import 'package:diplom/authentication/user_repository.dart';
+import 'package:diplom/navigation/navigation_cubit.dart';
 import 'package:diplom/widgects/app.dart';
 import 'package:diplom/widgects/logic_page.dart';
 import 'package:diplom/widgects/splash.dart';
-import 'package:diplom/widgects/home_page.dart';
+import 'package:diplom/widgects/pages/root_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -47,38 +48,41 @@ class _AppViewState extends State<AppView> {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      navigatorKey: _navigatorKey,
-      debugShowCheckedModeBanner: false,
-      theme: ThemeData(
-        textTheme: GoogleFonts.interTextTheme(
-          Theme.of(context).textTheme,
-        )
+    return BlocProvider<NavigationCubit>(
+      create: (context) => NavigationCubit(),
+      child: MaterialApp(
+        navigatorKey: _navigatorKey,
+        debugShowCheckedModeBanner: false,
+        theme: ThemeData(
+            textTheme: GoogleFonts.interTextTheme(
+              Theme.of(context).textTheme,
+            )
+        ),
+        builder: (context, child) {
+          return BlocListener<AuthenticationBloc, AuthenticationState>(
+            listener: (context, state) {
+              switch (state.status) {
+                case AuthenticationStatus.authenticated:
+                  _navigator.pushAndRemoveUntil<void>(
+                    HomePage.route(),
+                        (route) => false,
+                  );
+                  break;
+                case AuthenticationStatus.unauthenticated:
+                  _navigator.pushAndRemoveUntil<void>(
+                    LoginPage.route(),
+                        (route) => false,
+                  );
+                  break;
+                default:
+                  break;
+              }
+            },
+            child: child,
+          );
+        },
+        onGenerateRoute: (_) => SplashPage.route(),
       ),
-      builder: (context, child) {
-        return BlocListener<AuthenticationBloc, AuthenticationState>(
-          listener: (context, state) {
-            switch (state.status) {
-              case AuthenticationStatus.authenticated:
-                _navigator.pushAndRemoveUntil<void>(
-                  HomePage.route(),
-                      (route) => false,
-                );
-                break;
-              case AuthenticationStatus.unauthenticated:
-                _navigator.pushAndRemoveUntil<void>(
-                  LoginPage.route(),
-                      (route) => false,
-                );
-                break;
-              default:
-                break;
-            }
-          },
-          child: child,
-        );
-      },
-      onGenerateRoute: (_) => SplashPage.route(),
     );
   }
 }
