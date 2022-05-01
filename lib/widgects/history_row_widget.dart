@@ -3,11 +3,14 @@ import 'dart:ui';
 import 'package:flutter/material.dart';
 
 class HistoryRow extends StatelessWidget {
-  const HistoryRow({Key? key}) : super(key: key);
+  final String header;
+  final String label;
 
-  static Route route() {
-    return MaterialPageRoute<void>(builder: (_) => const HistoryRow());
-  }
+  const HistoryRow({
+    Key? key,
+    required this.header,
+    required this.label,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -19,16 +22,16 @@ class HistoryRow extends StatelessWidget {
           child:  Column(
             mainAxisAlignment: MainAxisAlignment.start,
             crossAxisAlignment: CrossAxisAlignment.start,
-            children: const [
-              Padding( padding: EdgeInsets.only(top: 32)),
-              Text('Hardworker',
-                  style: TextStyle(
+            children: [
+              const Padding( padding: EdgeInsets.only(top: 32)),
+              Text(header,
+                  style: const TextStyle(
                       fontSize: 20,
                       fontWeight: FontWeight.w600,
                       color: Color.fromRGBO(93, 92, 99, 1))),
-              Padding(padding: EdgeInsets.only(top: 4)),
-              Text('You’ve completed 5 courses. Great motivation!',
-                  style: TextStyle(
+              const Padding(padding: EdgeInsets.only(top: 4)),
+              Text(label,
+                  style: const TextStyle(
                       fontSize: 16,
                       fontWeight: FontWeight.w400,
                       color: Color.fromRGBO(140, 138, 149, 1))),

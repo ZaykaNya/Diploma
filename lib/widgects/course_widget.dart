@@ -3,11 +3,16 @@ import 'dart:ui';
 import 'package:flutter/material.dart';
 
 class Course extends StatelessWidget {
-  const Course({Key? key}) : super(key: key);
+  final String course;
+  final String progress;
+  final String time;
 
-  static Route route() {
-    return MaterialPageRoute<void>(builder: (_) => const Course());
-  }
+  const Course({
+    Key? key,
+    required this.course,
+    required this.progress,
+    required this.time
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -25,8 +30,8 @@ class Course extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.start,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const Text('React',
-                      style: TextStyle(
+                  Text(course,
+                      style: const TextStyle(
                           fontSize: 20,
                           fontWeight: FontWeight.w600,
                           color: Color.fromRGBO(93, 92, 99, 1))),
@@ -35,39 +40,39 @@ class Course extends StatelessWidget {
                     mainAxisAlignment: MainAxisAlignment.start,
                     children: [
                       RichText(
-                        text: const TextSpan(
-                          style: TextStyle(
+                        text: TextSpan(
+                          style: const TextStyle(
                               fontSize: 16,
                               fontWeight: FontWeight.w400,
                               color: Color.fromRGBO(140, 138, 149, 1)),
                           children: [
-                            WidgetSpan(
+                            const WidgetSpan(
                               child: Padding(
                                 padding: EdgeInsets.symmetric(horizontal: 2.0),
                                 child: Icon(Icons.star,
                                     size: 24, color: Colors.orange),
                               ),
                             ),
-                            TextSpan(text: '75%'),
+                            TextSpan(text: progress),
                           ],
                         ),
                       ),
                       const Padding(padding: EdgeInsets.only(right: 60)),
                       RichText(
-                        text: const TextSpan(
-                          style: TextStyle(
+                        text: TextSpan(
+                          style: const TextStyle(
                               fontSize: 16,
                               fontWeight: FontWeight.w400,
                               color: Color.fromRGBO(140, 138, 149, 1)),
                           children: [
-                            WidgetSpan(
+                            const WidgetSpan(
                               child: Padding(
                                 padding: EdgeInsets.symmetric(horizontal: 2.0),
                                 child: Icon(Icons.timer,
                                     size: 24, color: Colors.blue),
                               ),
                             ),
-                            TextSpan(text: '5 h.'),
+                            TextSpan(text: time),
                           ],
                         ),
                       ),

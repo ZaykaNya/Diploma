@@ -32,9 +32,18 @@ class Achievements extends StatelessWidget {
               padding: const EdgeInsets.fromLTRB(4, 0, 4, 0),
               child: Column(
                 children: const [
-                  Achievement(),
-                  Achievement(),
-                  Achievement(),
+                  Achievement(
+                    header: 'Newcomer 1',
+                    label: 'You’ve completed your first course. Keep it up!',
+                  ),
+                  Achievement(
+                    header: 'Newcomer 2',
+                    label: 'You’ve completed your first course. Keep it up!',
+                  ),
+                  Achievement(
+                    header: 'Newcomer 3',
+                    label: 'You’ve completed your first course. Keep it up!',
+                  ),
                 ],
               ),
             )

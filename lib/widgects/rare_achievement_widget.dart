@@ -3,11 +3,16 @@ import 'dart:ui';
 import 'package:flutter/material.dart';
 
 class RareAchievement extends StatelessWidget {
-  const RareAchievement({Key? key}) : super(key: key);
+  final String header;
+  final String course;
+  final String label;
 
-  static Route route() {
-    return MaterialPageRoute<void>(builder: (_) => const RareAchievement());
-  }
+  const RareAchievement({
+    Key? key,
+    required this.header,
+    required this.course,
+    required this.label
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -22,22 +27,22 @@ class RareAchievement extends StatelessWidget {
           child:  Column(
             mainAxisAlignment: MainAxisAlignment.start,
             crossAxisAlignment: CrossAxisAlignment.start,
-            children: const [
-              Text('Hook me',
-                  style: TextStyle(
+            children: [
+              Text(header,
+                  style: const TextStyle(
                       fontSize: 20,
                       fontWeight: FontWeight.w600,
                       color: Color.fromRGBO(93, 92, 99, 1))),
-              Padding(padding: EdgeInsets.only(top: 4)),
-              Text('React',
-                  style: TextStyle(
+              const Padding(padding: EdgeInsets.only(top: 4)),
+              Text(course,
+                  style: const TextStyle(
                       fontSize: 16,
                       fontWeight: FontWeight.w400,
                       fontStyle: FontStyle.italic,
                       color: Color.fromRGBO(80, 71, 153, 1))),
-              Padding(padding: EdgeInsets.only(top: 4)),
-              Text('You’ve completed your first course. Keep it up!',
-                  style: TextStyle(
+              const Padding(padding: EdgeInsets.only(top: 4)),
+              Text(label,
+                  style: const TextStyle(
                       fontSize: 16,
                       fontWeight: FontWeight.w400,
                       color: Color.fromRGBO(140, 138, 149, 1))),

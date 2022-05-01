@@ -27,9 +27,18 @@ class History extends StatelessWidget {
               padding: const EdgeInsets.fromLTRB(16, 0, 16, 0),
               child: Column(
                 children: const [
-                  HistoryRow(),
-                  HistoryRow(),
-                  HistoryRow(),
+                  HistoryRow(
+                    header: '1h 35m',
+                    label: 'Something happened\nIdk',
+                  ),
+                  HistoryRow(
+                    header: '1h 45m',
+                    label: 'Something happened\nIdk',
+                  ),
+                  HistoryRow(
+                    header: '1h 45m',
+                    label: 'Something happened\nIdk',
+                  ),
                 ],
               ),
             ),

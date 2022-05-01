@@ -7,7 +7,6 @@ class NavigationCubit extends Cubit<NavigationState> {
   NavigationCubit() : super(const NavigationState(NavbarItem.statistics, 0));
 
   void getNavBarItem(NavbarItem navbarItem) {
-    print('kuku');
     switch (navbarItem) {
       case NavbarItem.statistics:
         emit(const NavigationState(NavbarItem.statistics, 0));

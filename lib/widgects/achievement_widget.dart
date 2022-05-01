@@ -3,11 +3,14 @@ import 'dart:ui';
 import 'package:flutter/material.dart';
 
 class Achievement extends StatelessWidget {
-  const Achievement({Key? key}) : super(key: key);
+  final String header;
+  final String label;
 
-  static Route route() {
-    return MaterialPageRoute<void>(builder: (_) => const Achievement());
-  }
+  const Achievement({
+    Key? key,
+    required this.header,
+    required this.label
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -22,15 +25,15 @@ class Achievement extends StatelessWidget {
           child:  Column(
             mainAxisAlignment: MainAxisAlignment.start,
             crossAxisAlignment: CrossAxisAlignment.start,
-            children: const [
-              Text('Newcomer',
-                  style: TextStyle(
+            children: [
+              Text(header,
+                  style: const TextStyle(
                       fontSize: 20,
                       fontWeight: FontWeight.w600,
                       color: Color.fromRGBO(93, 92, 99, 1))),
-              Padding(padding: EdgeInsets.only(top: 4)),
-              Text('You’ve completed your first course. Keep it up! ',
-                  style: TextStyle(
+            const Padding(padding: EdgeInsets.only(top: 4)),
+              Text(label,
+                  style: const TextStyle(
                       fontSize: 16,
                       fontWeight: FontWeight.w400,
                       color: Color.fromRGBO(140, 138, 149, 1))),

@@ -64,7 +64,10 @@ class _HomePageState extends State<HomePage> {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: <Widget>[
-            const Profile(),
+            const Profile(
+              name: "Andrii",
+              surname: "Demchyshyn",
+            ),
             BlocBuilder<NavigationCubit, NavigationState>(
                 builder: (context, state) {
                   if (state.navbarItem == NavbarItem.statistics) {

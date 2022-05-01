@@ -34,9 +34,21 @@ class Courses extends StatelessWidget {
               padding: const EdgeInsets.fromLTRB(8, 0, 8, 0),
               child: Column(
                 children: const [
-                  Course(),
-                  Course(),
-                  Course(),
+                  Course(
+                    course: 'React',
+                    progress: '85%',
+                    time: '5 h.',
+                  ),
+                  Course(
+                    course: 'React',
+                    progress: '75%',
+                    time: '5 h.',
+                  ),
+                  Course(
+                    course: 'React',
+                    progress: '75%',
+                    time: '5 h.',
+                  ),
                 ],
               ),
             )

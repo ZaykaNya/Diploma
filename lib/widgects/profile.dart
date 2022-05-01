@@ -3,11 +3,14 @@ import 'dart:ui';
 import 'package:flutter/material.dart';
 
 class Profile extends StatelessWidget {
-  const Profile({Key? key}) : super(key: key);
+  final String name;
+  final String surname;
 
-  static Route route() {
-    return MaterialPageRoute<void>(builder: (_) => const Profile());
-  }
+  const Profile({
+    Key? key,
+    required this.name,
+    required this.surname,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -24,11 +27,11 @@ class Profile extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               RichText(
-                text: const TextSpan(
-                  style: TextStyle(fontSize: 20, fontWeight: FontWeight.w600, color: Color.fromRGBO(93, 92, 99, 1)),
+                text: TextSpan(
+                  style: const TextStyle(fontSize: 20, fontWeight: FontWeight.w600, color: Color.fromRGBO(93, 92, 99, 1)),
                   children: [
-                    TextSpan(text: 'Valery Grant'),
-                    WidgetSpan(
+                    TextSpan(text: '$name $surname'),
+                    const WidgetSpan(
                       child: Padding(
                         padding: EdgeInsets.symmetric(horizontal: 2.0),
                         child: Icon(Icons.accessible, color: Color.fromRGBO(93, 92, 99, 1)),

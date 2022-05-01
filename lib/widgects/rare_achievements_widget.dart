@@ -22,18 +22,32 @@ class RareAchievements extends StatelessWidget {
               thickness: 10,
               color: Color.fromRGBO(218, 220, 239, 1),
             ),
-            const Padding(padding: EdgeInsets.fromLTRB(16, 24, 16, 16),
-                child: Text("Rare achievements", style: TextStyle(
-                    fontSize: 24,
-                    fontWeight: FontWeight.w700,
-                    color: Color.fromRGBO(93, 92, 99, 1)))),
+            const Padding(
+                padding: EdgeInsets.fromLTRB(16, 24, 16, 16),
+                child: Text("Rare achievements",
+                    style: TextStyle(
+                        fontSize: 24,
+                        fontWeight: FontWeight.w700,
+                        color: Color.fromRGBO(93, 92, 99, 1)))),
             Padding(
               padding: const EdgeInsets.fromLTRB(4, 0, 4, 0),
               child: Column(
                 children: const [
-                  RareAchievement(),
-                  RareAchievement(),
-                  RareAchievement(),
+                  RareAchievement(
+                    header: 'Special function',
+                    course: 'React',
+                    label: 'You made class component happy by using it!',
+                  ),
+                  RareAchievement(
+                    header: 'Hook me',
+                    course: 'React',
+                    label: 'You catched the difference between hooks and classes!',
+                  ),
+                  RareAchievement(
+                    header: 'Widget master',
+                    course: 'Dart',
+                    label: 'You created your first application!',
+                  ),
                 ],
               ),
             )
