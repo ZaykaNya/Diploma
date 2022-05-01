@@ -50,12 +50,14 @@ class _HomePageState extends State<HomePage> {
           IconButton(
             padding: const EdgeInsets.only(right: 8),
             icon: const Icon(
-              Icons.settings,
+              Icons.logout,
               color: Colors.white,
-              size: 30,
+              size: 24,
             ),
             onPressed: () {
-              // do something
+              context
+                  .read<AuthenticationBloc>()
+                  .add(AuthenticationLogoutRequested());
             },
           )
         ],
@@ -89,22 +91,6 @@ class _HomePageState extends State<HomePage> {
                   }
                   return Container();
                 }),
-            Builder(
-              builder: (context) {
-                final userId = context.select(
-                      (AuthenticationBloc bloc) => bloc.state.user.id,
-                );
-                return Text('UserID: $userId');
-              },
-            ),
-            ElevatedButton(
-              child: const Text('Logout'),
-              onPressed: () {
-                context
-                    .read<AuthenticationBloc>()
-                    .add(AuthenticationLogoutRequested());
-              },
-            ),
           ],
         ),
       ),

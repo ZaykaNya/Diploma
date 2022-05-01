@@ -31,10 +31,10 @@ class Profile extends StatelessWidget {
                   style: const TextStyle(fontSize: 20, fontWeight: FontWeight.w600, color: Color.fromRGBO(93, 92, 99, 1)),
                   children: [
                     TextSpan(text: '$name $surname'),
-                    const WidgetSpan(
+                    WidgetSpan(
                       child: Padding(
-                        padding: EdgeInsets.symmetric(horizontal: 2.0),
-                        child: Icon(Icons.accessible, color: Color.fromRGBO(93, 92, 99, 1)),
+                        padding: const EdgeInsets.symmetric(horizontal: 8),
+                        child: Image.asset('assets/images/student.jpg'),
                       ),
                     ),
                   ],
