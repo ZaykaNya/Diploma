@@ -10,6 +10,7 @@ import 'package:diplom/widgects/achievements_widget.dart';
 import 'package:diplom/widgects/courses_widget.dart';
 import 'package:diplom/widgects/history_widget.dart';
 import 'package:diplom/widgects/average_dashboard_widget.dart';
+import 'package:diplom/widgects/rare_achievements_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -74,9 +75,14 @@ class _HomePageState extends State<HomePage> {
                       ],
                     );
                   } else if (state.navbarItem == NavbarItem.progress) {
-                    return Achievements();
+                    return Column(
+                      children: const [
+                        Achievements(),
+                        RareAchievements(),
+                      ],
+                    );
                   } else if (state.navbarItem == NavbarItem.history) {
-                    return History();
+                    return const History();
                   }
                   return Container();
                 }),
