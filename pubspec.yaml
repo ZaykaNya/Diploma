@@ -41,6 +41,7 @@ dependencies:
   flutter_bloc: ^8.0.1
   formz: ^0.4.1
   google_fonts: ^2.1.0
+  syncfusion_flutter_gauges: ^20.1.51
 
 dev_dependencies:
   flutter_test:
