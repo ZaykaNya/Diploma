@@ -5,11 +5,13 @@ import 'package:flutter/material.dart';
 class Profile extends StatelessWidget {
   final String name;
   final String surname;
+  final String login;
 
   const Profile({
     Key? key,
     required this.name,
     required this.surname,
+    required this.login,
   }) : super(key: key);
 
   @override
@@ -41,7 +43,7 @@ class Profile extends StatelessWidget {
                 ),
               ),
               const Padding(padding: EdgeInsets.only(top: 4)),
-              const Text('val.grant@gmail.com', style: TextStyle(fontSize: 16, fontWeight: FontWeight.w400, color: Color.fromRGBO(140, 138, 149, 1))),
+              Text(login, style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w400, color: Color.fromRGBO(140, 138, 149, 1))),
             ],
           )
         ],
