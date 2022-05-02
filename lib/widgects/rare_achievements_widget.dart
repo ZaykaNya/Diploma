@@ -30,7 +30,7 @@ class RareAchievements extends StatelessWidget {
                         fontWeight: FontWeight.w700,
                         color: Color.fromRGBO(93, 92, 99, 1)))),
             Padding(
-              padding: const EdgeInsets.fromLTRB(16, 0, 16, 0),
+              padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
               child: Column(
                 children: const [
                   RareAchievement(
