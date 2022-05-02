@@ -42,9 +42,25 @@ class AverageDashboard extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Column(
-                    children: const [
-                      Text("5", style: TextStyle(fontSize: 32, fontWeight: FontWeight.w600, color: Color.fromRGBO(134, 137, 235, 1))),
-                      Text("Completed", style: TextStyle(fontSize: 16, fontWeight: FontWeight.w400, color: Color.fromRGBO(140, 138, 149, 1))),
+                    children: [
+                      RichText(
+                        text: TextSpan(
+                          style: const TextStyle(
+                              fontSize: 32,
+                              fontWeight: FontWeight.w600,
+                              color: Color.fromRGBO(134, 137, 235, 1)),
+                          children: [
+                            const TextSpan(text: "5"),
+                            WidgetSpan(
+                              child: Padding(
+                                padding: const EdgeInsets.fromLTRB(4, 0, 0, 5),
+                                child: Image.asset('assets/images/checkmark_icon.png'),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      const Text("Completed", style: TextStyle(fontSize: 16, fontWeight: FontWeight.w400, color: Color.fromRGBO(140, 138, 149, 1))),
                     ],
                   ),
                   const Padding(padding: EdgeInsets.only(right: 48)),
@@ -55,9 +71,25 @@ class AverageDashboard extends StatelessWidget {
                   ),
                   const Padding(padding: EdgeInsets.only(right: 48)),
                   Column(
-                    children: const [
-                      Text("2", style: TextStyle(fontSize: 32, fontWeight: FontWeight.w600, color: Color.fromRGBO(30, 176, 159, 1))),
-                      Text("In progress", style: TextStyle(fontSize: 16, fontWeight: FontWeight.w400, color: Color.fromRGBO(140, 138, 149, 1))),
+                    children: [
+                      RichText(
+                        text: TextSpan(
+                          style: const TextStyle(
+                              fontSize: 32,
+                              fontWeight: FontWeight.w600,
+                              color: Color.fromRGBO(30, 176, 159, 1)),
+                          children: [
+                            const TextSpan(text: "2"),
+                            WidgetSpan(
+                              child: Padding(
+                                padding: const EdgeInsets.fromLTRB(4, 0, 0, 5),
+                                child: Image.asset('assets/images/pencil_icon.png'),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      const Text("In progress", style: TextStyle(fontSize: 16, fontWeight: FontWeight.w400, color: Color.fromRGBO(140, 138, 149, 1))),
                     ],
                   )
                 ],

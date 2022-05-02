@@ -22,9 +22,8 @@ class Course extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.start,
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            const Icon(Icons.radio_button_checked,
-                size: 103, color: Colors.blueAccent),
-            const Padding(padding: EdgeInsets.only(right: 0)),
+            Image.asset('assets/images/react_icon.png'),
+            const Padding(padding: EdgeInsets.only(right: 16)),
             Expanded(
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.start,
@@ -38,19 +37,20 @@ class Course extends StatelessWidget {
                   const Padding(padding: EdgeInsets.only(top: 4)),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.start,
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       RichText(
                         text: TextSpan(
                           style: const TextStyle(
                               fontSize: 16,
+                              height: 1.5,
                               fontWeight: FontWeight.w400,
                               color: Color.fromRGBO(140, 138, 149, 1)),
                           children: [
-                            const WidgetSpan(
+                            WidgetSpan(
                               child: Padding(
-                                padding: EdgeInsets.symmetric(horizontal: 2.0),
-                                child: Icon(Icons.star,
-                                    size: 24, color: Colors.orange),
+                                padding: const EdgeInsets.fromLTRB(0, 0, 6, 0),
+                                child: Image.asset('assets/images/star_icon.png'),
                               ),
                             ),
                             TextSpan(text: progress),
@@ -62,14 +62,14 @@ class Course extends StatelessWidget {
                         text: TextSpan(
                           style: const TextStyle(
                               fontSize: 16,
+                              height: 1.5,
                               fontWeight: FontWeight.w400,
                               color: Color.fromRGBO(140, 138, 149, 1)),
                           children: [
-                            const WidgetSpan(
+                            WidgetSpan(
                               child: Padding(
-                                padding: EdgeInsets.symmetric(horizontal: 2.0),
-                                child: Icon(Icons.timer,
-                                    size: 24, color: Colors.blue),
+                                padding: const EdgeInsets.fromLTRB(0, 0, 6, 0),
+                                child: Image.asset('assets/images/alarm_clock_icon.png'),
                               ),
                             ),
                             TextSpan(text: time),
@@ -83,7 +83,7 @@ class Course extends StatelessWidget {
             ),
           ],
         ),
-        const Padding(padding: EdgeInsets.only(top: 8)),
+        const Padding(padding: EdgeInsets.only(top: 16)),
         const Divider(
           height: 2,
           thickness: 2,
@@ -91,7 +91,7 @@ class Course extends StatelessWidget {
           endIndent: 8,
           color: Color.fromRGBO(235, 235, 235, 1),
         ),
-        const Padding(padding: EdgeInsets.only(top: 8)),
+        const Padding(padding: EdgeInsets.only(top: 16)),
       ],
     );
   }
