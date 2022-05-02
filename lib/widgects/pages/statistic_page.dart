@@ -25,20 +25,16 @@ class StatisticPage extends StatefulWidget {
   }) : super(key: key);
 
   @override
-  State<StatisticPage> createState() => _StatisticPageState(userId);
+  State<StatisticPage> createState() => _StatisticPageState();
 }
 
 class _StatisticPageState extends State<StatisticPage> {
   int _selectedIndex = 0;
-  final String userId;
   final UserBloc _userBloc = UserBloc();
-
-  _StatisticPageState(this.userId);
 
   @override
   void initState() {
-    print(userId);
-    _userBloc.add(GetUser(id: userId));
+    _userBloc.add(GetUser(id: widget.userId));
     super.initState();
   }
 
