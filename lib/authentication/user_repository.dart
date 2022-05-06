@@ -29,4 +29,8 @@ class UserRepository {
   Future<List<UserLog>> getUserLogsById(id) async {
     return fetchUserLogsById(id);
   }
+
+  Future<List<UserLog>> getUserLogsFromTime(id, time) async {
+    return fetchUserLogsFromTime(id, time);
+  }
 }

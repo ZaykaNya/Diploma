@@ -2,6 +2,9 @@ import 'dart:ui';
 
 import 'package:diplom/authentication/authentication.dart';
 import 'package:diplom/authentication/authentication_bloc.dart';
+import 'package:diplom/blocs/logs/logs_bloc.dart';
+import 'package:diplom/blocs/logs/logs_event.dart';
+import 'package:diplom/blocs/logs/logs_state.dart';
 import 'package:diplom/blocs/user/user_bloc.dart';
 import 'package:diplom/blocs/user/user_event.dart';
 import 'package:diplom/blocs/user/user_state.dart';
@@ -33,11 +36,14 @@ class _StatisticPageState extends State<StatisticPage> {
   int _selectedIndex = 0;
   final UserBloc _userBloc = UserBloc();
   final UserLogsBloc _userLogsBloc = UserLogsBloc();
+  final LogsBloc _logsBloc = LogsBloc();
 
   @override
   void initState() {
+    DateTime now = DateTime.now();
     _userBloc.add(GetUser(id: widget.userId));
     _userLogsBloc.add(GetUserLogs(id: widget.userId));
+    _logsBloc.add(GetLogsFromTime(id: widget.userId, time: '${now.year}-${now.month}-${now.day}'));
     super.initState();
   }
 
@@ -56,6 +62,9 @@ class _StatisticPageState extends State<StatisticPage> {
           ),
           BlocProvider<UserLogsBloc>(
             create: (_) => _userLogsBloc,
+          ),
+          BlocProvider<LogsBloc>(
+            create: (_) => _logsBloc,
           )
         ],
         child: MultiBlocListener(
@@ -85,7 +94,6 @@ class _StatisticPageState extends State<StatisticPage> {
               },
             ),
           ],
-
           child: Scaffold(
             backgroundColor: Colors.white,
             appBar: AppBar(
@@ -137,7 +145,15 @@ class _StatisticPageState extends State<StatisticPage> {
                     if (state.navbarItem == NavbarItem.statistics) {
                       return Column(
                         children: [
-                          const AverageDashboard(),
+                          BlocBuilder<LogsBloc, LogsState>(
+                              builder: (context, state) {
+                                if(state is LogsLoaded) {
+                                  return AverageDashboard(logs: state.logs);
+                                } else {
+                                  return Container();
+                                }
+                              }
+                          ),
                           BlocBuilder<UserBloc, UserState>(
                               builder: (context, state) {
                             if (state is UserLoaded) {

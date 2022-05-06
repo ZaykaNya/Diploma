@@ -1,13 +1,37 @@
 import 'dart:ui';
 
+import 'package:diplom/models/log.dart';
 import 'package:syncfusion_flutter_gauges/gauges.dart';
 import 'package:flutter/material.dart';
 
-class AverageDashboard extends StatelessWidget {
-  const AverageDashboard({Key? key}) : super(key: key);
+class AverageDashboard extends StatefulWidget {
+  final List<UserLog> logs;
 
-  static Route route() {
-    return MaterialPageRoute<void>(builder: (_) => const AverageDashboard());
+  const AverageDashboard({Key? key, required this.logs}) : super(key: key);
+
+  @override
+  State<AverageDashboard> createState() => _AverageDashboardState();
+}
+
+class _AverageDashboardState extends State<AverageDashboard> {
+  double _dailyProgress = 0;
+
+  @override
+  void initState() {
+    countDailyProgress();
+    super.initState();
+  }
+
+  void countDailyProgress() {
+    double progress = 50;
+
+    for(UserLog userLog in widget.logs) {
+      progress += int.parse(userLog.seconds.toString());
+    }
+
+    setState(() {
+      _dailyProgress = progress.roundToDouble();
+    });
   }
 
   @override
@@ -39,10 +63,10 @@ class AverageDashboard extends StatelessWidget {
                     maximum: 100,
                     showLabels: false,
                     showTicks: false,
-                    annotations: const [
+                    annotations: [
                       GaugeAnnotation(
-                          widget: Text('80%',
-                              style: TextStyle(
+                          widget: Text('$_dailyProgress %',
+                              style: const TextStyle(
                                   fontSize: 38,
                                   fontWeight: FontWeight.w700,
                                   color: Color.fromRGBO(93, 92, 99, 1))),
@@ -53,13 +77,13 @@ class AverageDashboard extends StatelessWidget {
                         cornerStyle: CornerStyle.bothCurve,
                         color: Color.fromRGBO(235, 235, 235, 1),
                         thickness: 30),
-                    pointers: const [
+                    pointers: [
                       RangePointer(
-                          value: 80,
+                          value: _dailyProgress,
                           cornerStyle: CornerStyle.bothCurve,
                           width: 30,
                           sizeUnit: GaugeSizeUnit.logicalPixel,
-                          gradient: SweepGradient(colors: <Color>[
+                          gradient: const SweepGradient(colors: <Color>[
                             Color.fromRGBO(80, 69, 153, 1),
                             Color.fromRGBO(56, 179, 158, 1),
                             Color.fromRGBO(41, 245, 41, 1),
