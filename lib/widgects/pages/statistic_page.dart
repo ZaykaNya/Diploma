@@ -146,9 +146,24 @@ class _StatisticPageState extends State<StatisticPage> {
                       return Column(
                         children: [
                           BlocBuilder<LogsBloc, LogsState>(
-                              builder: (context, state) {
-                                if(state is LogsLoaded) {
-                                  return AverageDashboard(logs: state.logs);
+                              builder: (context, state1) {
+                                if(state1 is LogsLoaded) {
+                                  return BlocBuilder<UserLogsBloc, UserLogsState>(
+                                      builder: (context, state2) {
+                                        if(state2 is UserLogsLoaded) {
+                                          return BlocBuilder<UserBloc, UserState>(
+                                              builder: (context, state3) {
+                                                if (state3 is UserLoaded) {
+                                                  return AverageDashboard(logs: state1.logs, userLogs: state2.userLogs, courses: state3.user.courses);
+                                                } else {
+                                                  return Container();
+                                                }
+                                              });
+                                        } else {
+                                          return Container();
+                                        }
+                                      }
+                                  );
                                 } else {
                                   return Container();
                                 }

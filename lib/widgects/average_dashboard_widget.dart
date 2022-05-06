@@ -6,8 +6,10 @@ import 'package:flutter/material.dart';
 
 class AverageDashboard extends StatefulWidget {
   final List<UserLog> logs;
+  final List<UserLog> userLogs;
+  final List<dynamic> courses;
 
-  const AverageDashboard({Key? key, required this.logs}) : super(key: key);
+  const AverageDashboard({Key? key, required this.logs, required this.userLogs, required this.courses}) : super(key: key);
 
   @override
   State<AverageDashboard> createState() => _AverageDashboardState();
@@ -15,10 +17,13 @@ class AverageDashboard extends StatefulWidget {
 
 class _AverageDashboardState extends State<AverageDashboard> {
   double _dailyProgress = 0;
+  int _completedCourses = 0;
+  int _inProgressCourses = 0;
 
   @override
   void initState() {
     countDailyProgress();
+    countCompletedCourses();
     super.initState();
   }
 
@@ -31,6 +36,36 @@ class _AverageDashboardState extends State<AverageDashboard> {
 
     setState(() {
       _dailyProgress = progress.roundToDouble();
+    });
+  }
+
+  void countCompletedCourses() {
+    int completedCourses = 0;
+    int inProgressCourses = 0;
+    int progress = 0;
+    int time = 0;
+
+    for(var course in widget.courses) {
+      for(UserLog userLog in widget.userLogs) {
+        if(userLog.contentId!.contains(course['course'])) {
+          time += int.parse(userLog.seconds.toString());
+        }
+      }
+
+      progress = (time / 30).round();
+
+      if(progress >= 100) {
+        completedCourses += 1;
+      } else {
+        inProgressCourses += 1;
+      }
+
+      time = 0;
+    }
+
+    setState(() {
+      _completedCourses = completedCourses;
+      _inProgressCourses = inProgressCourses;
     });
   }
 
@@ -118,7 +153,7 @@ class _AverageDashboardState extends State<AverageDashboard> {
                               fontWeight: FontWeight.w600,
                               color: Color.fromRGBO(134, 137, 235, 1)),
                           children: [
-                            const TextSpan(text: "5"),
+                            TextSpan(text: "$_completedCourses"),
                             WidgetSpan(
                               child: Padding(
                                 padding: const EdgeInsets.fromLTRB(4, 0, 0, 5),
@@ -152,7 +187,7 @@ class _AverageDashboardState extends State<AverageDashboard> {
                               fontWeight: FontWeight.w600,
                               color: Color.fromRGBO(30, 176, 159, 1)),
                           children: [
-                            const TextSpan(text: "2"),
+                            TextSpan(text: "$_inProgressCourses"),
                             WidgetSpan(
                               child: Padding(
                                 padding: const EdgeInsets.fromLTRB(4, 0, 0, 5),
