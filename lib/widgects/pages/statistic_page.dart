@@ -5,6 +5,9 @@ import 'package:diplom/authentication/authentication_bloc.dart';
 import 'package:diplom/blocs/user/user_bloc.dart';
 import 'package:diplom/blocs/user/user_event.dart';
 import 'package:diplom/blocs/user/user_state.dart';
+import 'package:diplom/blocs/userLogs/user_logs_bloc.dart';
+import 'package:diplom/blocs/userLogs/user_logs_event.dart';
+import 'package:diplom/blocs/userLogs/user_logs_state.dart';
 import 'package:diplom/navigation/constants/nav_bar_items.dart';
 import 'package:diplom/navigation/navigation_cubit.dart';
 import 'package:diplom/navigation/navigation_state.dart';
@@ -19,10 +22,8 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 
 class StatisticPage extends StatefulWidget {
   final String userId;
-  const StatisticPage({
-    Key? key,
-    required this.userId
-  }) : super(key: key);
+
+  const StatisticPage({Key? key, required this.userId}) : super(key: key);
 
   @override
   State<StatisticPage> createState() => _StatisticPageState();
@@ -31,10 +32,12 @@ class StatisticPage extends StatefulWidget {
 class _StatisticPageState extends State<StatisticPage> {
   int _selectedIndex = 0;
   final UserBloc _userBloc = UserBloc();
+  final UserLogsBloc _userLogsBloc = UserLogsBloc();
 
   @override
   void initState() {
     _userBloc.add(GetUser(id: widget.userId));
+    _userLogsBloc.add(GetUserLogs(id: widget.userId));
     super.initState();
   }
 
@@ -46,18 +49,43 @@ class _StatisticPageState extends State<StatisticPage> {
 
   @override
   Widget build(BuildContext context) {
-    return BlocProvider(
-        create: (_) => _userBloc,
-        child: BlocListener<UserBloc, UserState>(
-          listener: (context, state) => {
-            if (state is UserError) {
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(
-                  content: Text(state.message!),
-                ),
-              )
-            }
-          },
+    return MultiBlocProvider(
+        providers: [
+          BlocProvider<UserBloc>(
+            create: (_) => _userBloc,
+          ),
+          BlocProvider<UserLogsBloc>(
+            create: (_) => _userLogsBloc,
+          )
+        ],
+        child: MultiBlocListener(
+          listeners: [
+            BlocListener<UserBloc, UserState>(
+              listener: (context, state) => {
+                if (state is UserError)
+                  {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        content: Text(state.message!),
+                      ),
+                    )
+                  }
+              },
+            ),
+            BlocListener<UserLogsBloc, UserLogsState>(
+              listener: (context, state) => {
+                if (state is UserLogsError)
+                  {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        content: Text(state.message!),
+                      ),
+                    )
+                  }
+              },
+            ),
+          ],
+
           child: Scaffold(
             backgroundColor: Colors.white,
             appBar: AppBar(
@@ -106,25 +134,32 @@ class _StatisticPageState extends State<StatisticPage> {
                   ),
                   BlocBuilder<NavigationCubit, NavigationState>(
                       builder: (context, state) {
-                        if (state.navbarItem == NavbarItem.statistics) {
-                          return Column(
-                            children: const [
-                              AverageDashboard(),
-                              Courses(),
-                            ],
-                          );
-                        } else if (state.navbarItem == NavbarItem.progress) {
-                          return Column(
-                            children: const [
-                              Achievements(),
-                              RareAchievements(),
-                            ],
-                          );
-                        } else if (state.navbarItem == NavbarItem.history) {
-                          return const History();
-                        }
-                        return Container();
-                      }),
+                    if (state.navbarItem == NavbarItem.statistics) {
+                      return Column(
+                        children: [
+                          const AverageDashboard(),
+                          BlocBuilder<UserBloc, UserState>(
+                              builder: (context, state) {
+                            if (state is UserLoaded) {
+                              return Courses(courses: state.user.courses);
+                            } else {
+                              return Container();
+                            }
+                          }),
+                        ],
+                      );
+                    } else if (state.navbarItem == NavbarItem.progress) {
+                      return Column(
+                        children: const [
+                          Achievements(),
+                          RareAchievements(),
+                        ],
+                      );
+                    } else if (state.navbarItem == NavbarItem.history) {
+                      return const History();
+                    }
+                    return Container();
+                  }),
                 ],
               ),
             ),
@@ -163,8 +198,7 @@ class _StatisticPageState extends State<StatisticPage> {
               backgroundColor: const Color.fromRGBO(80, 71, 153, 1),
             ),
           ),
-        )
-    );
+        ));
   }
 
   Widget _buildLoading() => const Center(child: CircularProgressIndicator());

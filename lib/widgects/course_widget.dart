@@ -1,18 +1,69 @@
 import 'dart:ui';
 
+import 'package:diplom/models/log.dart';
 import 'package:flutter/material.dart';
 
-class Course extends StatelessWidget {
-  final String course;
-  final String progress;
-  final String time;
+extension StringExtension on String {
+  String capitalize() {
+    return "${this[0].toUpperCase()}${substring(1).toLowerCase()}";
+  }
+}
 
-  const Course({
+class CourseWidget extends StatefulWidget {
+  final String course;
+  final List<UserLog> userLogs;
+
+  const CourseWidget({
     Key? key,
     required this.course,
-    required this.progress,
-    required this.time
+    required this.userLogs
   }) : super(key: key);
+
+  @override
+  State<CourseWidget> createState() => _CourseWidgetState();
+}
+
+class _CourseWidgetState extends State<CourseWidget> {
+  int _progress = 0;
+  double _time = 0;
+
+  @override
+  void initState() {
+    countProgress();
+    countTime();
+    super.initState();
+  }
+
+  void countProgress() {
+    int progress = 0;
+    double time = 0;
+
+    for(UserLog userLog in widget.userLogs) {
+      if(userLog.contentId!.contains(widget.course)) {
+        time += int.parse(userLog.seconds.toString());
+      }
+    }
+
+    progress = (time / 30).round();
+
+    setState(() {
+      _progress = progress;
+    });
+  }
+
+  void countTime() {
+    double time = 0;
+
+    for(UserLog userLog in widget.userLogs) {
+      if(userLog.contentId!.contains(widget.course)) {
+        time += int.parse(userLog.seconds.toString()) / 3600;
+      }
+    }
+
+    setState(() {
+      _time = double.parse(time.toStringAsPrecision(2));
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -29,7 +80,7 @@ class Course extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.start,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(course,
+                  Text(widget.course.capitalize(),
                       style: const TextStyle(
                           fontSize: 20,
                           fontWeight: FontWeight.w600,
@@ -53,7 +104,7 @@ class Course extends StatelessWidget {
                                 child: Image.asset('assets/images/star_icon.png'),
                               ),
                             ),
-                            TextSpan(text: progress),
+                            TextSpan(text: '$_progress %'),
                           ],
                         ),
                       ),
@@ -72,7 +123,7 @@ class Course extends StatelessWidget {
                                 child: Image.asset('assets/images/alarm_clock_icon.png'),
                               ),
                             ),
-                            TextSpan(text: time),
+                            TextSpan(text: "$_time h."),
                           ],
                         ),
                       ),

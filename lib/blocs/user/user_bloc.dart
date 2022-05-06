@@ -3,7 +3,6 @@ import 'package:diplom/blocs/user/user_event.dart';
 import 'package:diplom/blocs/user/user_state.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-
 class UserBloc extends Bloc<UserEvent, UserState> {
   UserBloc() : super(UserInitial()) {
     final UserRepository _userRepository = UserRepository();

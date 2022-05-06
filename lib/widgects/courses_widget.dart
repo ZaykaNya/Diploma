@@ -1,15 +1,14 @@
 import 'dart:ui';
-
+import 'package:diplom/blocs/userLogs/user_logs_bloc.dart';
+import 'package:diplom/blocs/userLogs/user_logs_state.dart';
 import 'package:flutter/material.dart';
-
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'course_widget.dart';
 
 class Courses extends StatelessWidget {
-  const Courses({Key? key}) : super(key: key);
+  final List<dynamic> courses;
 
-  static Route route() {
-    return MaterialPageRoute<void>(builder: (_) => const Courses());
-  }
+  const Courses({Key? key, required this.courses}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -33,22 +32,15 @@ class Courses extends StatelessWidget {
             Padding(
               padding: const EdgeInsets.fromLTRB(16, 0, 16, 0),
               child: Column(
-                children: const [
-                  Course(
-                    course: 'React',
-                    progress: '85%',
-                    time: '5 h.',
-                  ),
-                  Course(
-                    course: 'React',
-                    progress: '75%',
-                    time: '5 h.',
-                  ),
-                  Course(
-                    course: 'React',
-                    progress: '75%',
-                    time: '5 h.',
-                  ),
+                children: <Widget>[
+                  for(var course in courses) BlocBuilder<UserLogsBloc, UserLogsState>(
+                      builder: (context, state) {
+                        if (state is UserLogsLoaded) {
+                          return CourseWidget(course: course['course'], userLogs: state.userLogs,);
+                        } else {
+                          return Container();
+                        }
+                      })
                 ],
               ),
             )
