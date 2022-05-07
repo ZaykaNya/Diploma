@@ -28,7 +28,7 @@ class _AverageDashboardState extends State<AverageDashboard> {
   }
 
   void countDailyProgress() {
-    double progress = 50;
+    double progress = 0;
 
     for(UserLog userLog in widget.logs) {
       progress += int.parse(userLog.seconds.toString());

@@ -61,7 +61,7 @@ class _CourseWidgetState extends State<CourseWidget> {
     }
 
     setState(() {
-      _time = double.parse(time.toStringAsPrecision(2));
+      _time = double.parse(time.toStringAsPrecision(1));
     });
   }
 

@@ -2,8 +2,10 @@ import 'package:diplom/authentication/authentication_bloc.dart';
 import 'package:diplom/authentication/authentication_repository.dart';
 import 'package:diplom/authentication/authentication_state.dart';
 import 'package:diplom/authentication/user_repository.dart';
+import 'package:diplom/blocs/logs/logs_bloc.dart';
+import 'package:diplom/blocs/user/user_bloc.dart';
+import 'package:diplom/blocs/userLogs/user_logs_bloc.dart';
 import 'package:diplom/navigation/navigation_cubit.dart';
-import 'package:diplom/widgects/app.dart';
 import 'package:diplom/widgects/logic_page.dart';
 import 'package:diplom/widgects/splash.dart';
 import 'package:diplom/widgects/pages/root_page.dart';
@@ -25,11 +27,24 @@ class App extends StatelessWidget {
   Widget build(BuildContext context) {
     return RepositoryProvider.value(
       value: authenticationRepository,
-      child: BlocProvider(
-        create: (_) => AuthenticationBloc(
-          authenticationRepository: authenticationRepository,
-          userRepository: userRepository,
-        ),
+      child: MultiBlocProvider(
+        providers: [
+          BlocProvider<AuthenticationBloc>(
+            create: (_) => AuthenticationBloc(
+              authenticationRepository: authenticationRepository,
+              userRepository: userRepository,
+            ),
+          ),
+          BlocProvider<UserBloc>(
+            create: (_) => UserBloc(),
+          ),
+          BlocProvider<LogsBloc>(
+            create: (_) => LogsBloc(),
+          ),
+          BlocProvider<UserLogsBloc>(
+            create: (_) => UserLogsBloc(),
+          ),
+        ],
         child: AppView(),
       ),
     );
@@ -55,9 +70,8 @@ class _AppViewState extends State<AppView> {
         debugShowCheckedModeBanner: false,
         theme: ThemeData(
             textTheme: GoogleFonts.interTextTheme(
-              Theme.of(context).textTheme,
-            )
-        ),
+          Theme.of(context).textTheme,
+        )),
         builder: (context, child) {
           return BlocListener<AuthenticationBloc, AuthenticationState>(
             listener: (context, state) {
@@ -65,13 +79,13 @@ class _AppViewState extends State<AppView> {
                 case AuthenticationStatus.authenticated:
                   _navigator.pushAndRemoveUntil<void>(
                     HomePage.route(),
-                        (route) => false,
+                    (route) => false,
                   );
                   break;
                 case AuthenticationStatus.unauthenticated:
                   _navigator.pushAndRemoveUntil<void>(
                     LoginPage.route(),
-                        (route) => false,
+                    (route) => false,
                   );
                   break;
                 default:

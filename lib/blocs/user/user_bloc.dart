@@ -13,7 +13,7 @@ class UserBloc extends Bloc<UserEvent, UserState> {
         final user = await _userRepository.getUserById(event.id);
         emit(UserLoaded(user));
       } catch (_) {
-        emit(const UserError("Failed to fetch data. is your device online?"));
+        emit(const UserError("Logout"));
       }
     });
   }
