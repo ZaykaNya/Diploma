@@ -1,6 +1,7 @@
 import 'dart:ui';
 
 import 'package:diplom/models/log.dart';
+import 'package:diplom/utils/calculator.dart';
 import 'package:syncfusion_flutter_gauges/gauges.dart';
 import 'package:flutter/material.dart';
 
@@ -22,51 +23,14 @@ class _AverageDashboardState extends State<AverageDashboard> {
 
   @override
   void initState() {
-    countDailyProgress();
-    countCompletedCourses();
+    final Calculator calculator = Calculator();
+    List<int> coursesProgress = calculator.countCompletedCourses(widget.courses, widget.userLogs);
+    setState(() {
+      _dailyProgress = calculator.countDailyProgress(widget.logs);
+      _completedCourses = coursesProgress[0];
+      _inProgressCourses = coursesProgress[1];
+    });
     super.initState();
-  }
-
-  void countDailyProgress() {
-    double progress = 0;
-
-    for(UserLog userLog in widget.logs) {
-      progress += int.parse(userLog.seconds.toString());
-    }
-
-    setState(() {
-      _dailyProgress = progress.roundToDouble();
-    });
-  }
-
-  void countCompletedCourses() {
-    int completedCourses = 0;
-    int inProgressCourses = 0;
-    int progress = 0;
-    int time = 0;
-
-    for(var course in widget.courses) {
-      for(UserLog userLog in widget.userLogs) {
-        if(userLog.contentId!.contains(course['course'])) {
-          time += int.parse(userLog.seconds.toString());
-        }
-      }
-
-      progress = (time / 30).round();
-
-      if(progress >= 100) {
-        completedCourses += 1;
-      } else {
-        inProgressCourses += 1;
-      }
-
-      time = 0;
-    }
-
-    setState(() {
-      _completedCourses = completedCourses;
-      _inProgressCourses = inProgressCourses;
-    });
   }
 
   @override

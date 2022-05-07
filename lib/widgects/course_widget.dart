@@ -3,6 +3,8 @@ import 'dart:ui';
 import 'package:diplom/models/log.dart';
 import 'package:flutter/material.dart';
 
+import '../utils/calculator.dart';
+
 extension StringExtension on String {
   String capitalize() {
     return "${this[0].toUpperCase()}${substring(1).toLowerCase()}";
@@ -29,40 +31,12 @@ class _CourseWidgetState extends State<CourseWidget> {
 
   @override
   void initState() {
-    countProgress();
-    countTime();
+    final Calculator calculator = Calculator();
+    setState(() {
+      _progress = calculator.countProgress(widget.userLogs, widget.course);
+      _time = calculator.countTime(widget.userLogs, widget.course);
+    });
     super.initState();
-  }
-
-  void countProgress() {
-    int progress = 0;
-    double time = 0;
-
-    for(UserLog userLog in widget.userLogs) {
-      if(userLog.contentId!.contains(widget.course)) {
-        time += int.parse(userLog.seconds.toString());
-      }
-    }
-
-    progress = (time / 30).round();
-
-    setState(() {
-      _progress = progress;
-    });
-  }
-
-  void countTime() {
-    double time = 0;
-
-    for(UserLog userLog in widget.userLogs) {
-      if(userLog.contentId!.contains(widget.course)) {
-        time += int.parse(userLog.seconds.toString()) / 3600;
-      }
-    }
-
-    setState(() {
-      _time = double.parse(time.toStringAsPrecision(1));
-    });
   }
 
   @override
