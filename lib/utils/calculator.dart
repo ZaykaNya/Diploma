@@ -71,6 +71,7 @@ class Calculator {
 
   List<int> getGlobalAchievements(courses, userLogs, userTests) {
     List<int> achievements = [];
+    String bestMark = '0';
 
     if(courses.length > 0) {
       achievements.add(1);
@@ -82,6 +83,16 @@ class Calculator {
 
     if(userTests.length > 0) {
       achievements.add(3);
+    }
+
+    for(var userTest in userTests) {
+      if(userTest.percentage == '100') {
+        bestMark = '100';
+      }
+    }
+
+    if(bestMark == '100') {
+      achievements.add(4);
     }
 
     return achievements;
