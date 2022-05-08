@@ -1,8 +1,10 @@
 import 'dart:async';
 import 'dart:convert';
+import 'package:diplom/api/tests.dart';
 import 'package:diplom/api/users.dart';
 import 'package:diplom/models/auth_user.dart';
 import 'package:diplom/models/log.dart';
+import 'package:diplom/models/test.dart';
 import 'package:diplom/models/user.dart';
 import 'package:http/http.dart' as http;
 
@@ -32,5 +34,9 @@ class UserRepository {
 
   Future<List<UserLog>> getUserLogsFromTime(id, time) async {
     return fetchUserLogsFromTime(id, time);
+  }
+
+  Future<List<Test>> getUserTestsResult(id) async {
+    return fetchTestsByUserId(id);
   }
 }

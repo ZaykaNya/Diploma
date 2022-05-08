@@ -1,12 +1,7 @@
 import 'dart:ui';
 
-import 'package:diplom/blocs/logs/logs_bloc.dart';
-import 'package:diplom/blocs/logs/logs_state.dart';
 import 'package:diplom/blocs/user/user_bloc.dart';
 import 'package:diplom/blocs/user/user_state.dart';
-import 'package:diplom/blocs/userLogs/user_logs_bloc.dart';
-import 'package:diplom/blocs/userLogs/user_logs_state.dart';
-import 'package:diplom/widgects/average_dashboard_widget.dart';
 import 'package:diplom/widgects/profile.dart';
 import 'package:diplom/widgects/rare_achievements_widget.dart';
 import 'package:diplom/widgects/statistic_widjet.dart';

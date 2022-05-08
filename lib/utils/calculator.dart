@@ -6,8 +6,8 @@ class Calculator {
     int progress = 0;
     double time = 0;
 
-    for(UserLog userLog in userLogs) {
-      if(userLog.contentId!.contains(course)) {
+    for (UserLog userLog in userLogs) {
+      if (userLog.contentId!.contains(course)) {
         time += int.parse(userLog.seconds.toString());
       }
     }
@@ -21,8 +21,8 @@ class Calculator {
   double countTime(userLogs, course) {
     double time = 0;
 
-    for(UserLog userLog in userLogs) {
-      if(userLog.contentId!.contains(course)) {
+    for (UserLog userLog in userLogs) {
+      if (userLog.contentId!.contains(course)) {
         time += int.parse(userLog.seconds.toString()) / 3600;
       }
     }
@@ -34,7 +34,7 @@ class Calculator {
   double countDailyProgress(logs) {
     double progress = 0;
 
-    for(UserLog userLog in logs) {
+    for (UserLog userLog in logs) {
       progress += int.parse(userLog.seconds.toString());
     }
 
@@ -48,16 +48,16 @@ class Calculator {
     int progress = 0;
     int time = 0;
 
-    for(var course in courses) {
-      for(UserLog userLog in userLogs) {
-        if(userLog.contentId!.contains(course['course'])) {
+    for (var course in courses) {
+      for (UserLog userLog in userLogs) {
+        if (userLog.contentId!.contains(course['course'])) {
           time += int.parse(userLog.seconds.toString());
         }
       }
 
       progress = (time / 30).round();
 
-      if(progress >= 100) {
+      if (progress >= 100) {
         completedCourses += 1;
       } else {
         inProgressCourses += 1;
@@ -67,5 +67,23 @@ class Calculator {
     }
 
     return [completedCourses, inProgressCourses];
+  }
+
+  List<int> getGlobalAchievements(courses, userLogs, userTests) {
+    List<int> achievements = [];
+
+    if(courses.length > 0) {
+      achievements.add(1);
+    }
+
+    if(countCompletedCourses(courses, userLogs)[0] > 0) {
+      achievements.add(2);
+    }
+
+    if(userTests.length > 0) {
+      achievements.add(3);
+    }
+
+    return achievements;
   }
 }

@@ -5,6 +5,8 @@ import 'package:diplom/blocs/user/user_bloc.dart';
 import 'package:diplom/blocs/user/user_event.dart';
 import 'package:diplom/blocs/userLogs/user_logs_bloc.dart';
 import 'package:diplom/blocs/userLogs/user_logs_event.dart';
+import 'package:diplom/blocs/userTests/user_tests_bloc.dart';
+import 'package:diplom/blocs/userTests/user_tests_event.dart';
 import 'package:diplom/widgects/pages/statistic_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -26,6 +28,7 @@ class _HomePageState extends State<HomePage> {
     final userBloc = BlocProvider.of<UserBloc>(context);
     final logsBloc = BlocProvider.of<LogsBloc>(context);
     final userLogsBloc = BlocProvider.of<UserLogsBloc>(context);
+    final userTestsBloc = BlocProvider.of<UserTestsBloc>(context);
     return Builder(
       builder: (context) {
         final userId = context.select(
@@ -35,6 +38,7 @@ class _HomePageState extends State<HomePage> {
         userBloc.add(GetUser(id: userId));
         logsBloc.add(GetLogsFromTime(id: userId, time: '${now.year}-${now.month}-${now.day}'));
         userLogsBloc.add(GetUserLogs(id: userId));
+        userTestsBloc.add(GetUserTests(id: userId));
         return StatisticPage(userId: userId);
       },
     );

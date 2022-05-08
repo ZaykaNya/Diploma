@@ -11,6 +11,8 @@ import 'package:diplom/blocs/user/user_state.dart';
 import 'package:diplom/blocs/userLogs/user_logs_bloc.dart';
 import 'package:diplom/blocs/userLogs/user_logs_event.dart';
 import 'package:diplom/blocs/userLogs/user_logs_state.dart';
+import 'package:diplom/blocs/userTests/user_tests_bloc.dart';
+import 'package:diplom/blocs/userTests/user_tests_state.dart';
 import 'package:diplom/navigation/constants/nav_bar_items.dart';
 import 'package:diplom/navigation/navigation_cubit.dart';
 import 'package:diplom/navigation/navigation_state.dart';
@@ -160,8 +162,32 @@ class _StatisticPageState extends State<StatisticPage> {
                   );
                 } else if (state.navbarItem == NavbarItem.progress) {
                   return Column(
-                    children: const [
-                      Achievements(),
+                    children: [
+                      BlocBuilder<UserLogsBloc, UserLogsState>(
+                          builder: (context, userLogsState) {
+                        if (userLogsState is UserLogsLoaded) {
+                          return BlocBuilder<UserBloc, UserState>(
+                              builder: (context, userState) {
+                            if (userState is UserLoaded) {
+                              return BlocBuilder<UserTestsBloc, UserTestsState>(
+                                  builder: (context, testsState) {
+                                if (testsState is UserTestsLoaded) {
+                                  return Achievements(
+                                      userLogs: userLogsState.userLogs,
+                                      courses: userState.user.courses,
+                                      userTests: testsState.userTests);
+                                } else {
+                                  return Container();
+                                }
+                              });
+                            } else {
+                              return Container();
+                            }
+                          });
+                        } else {
+                          return Container();
+                        }
+                      })
                     ],
                   );
                 } else if (state.navbarItem == NavbarItem.history) {
