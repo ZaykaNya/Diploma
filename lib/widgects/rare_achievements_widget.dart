@@ -24,7 +24,7 @@ class RareAchievements extends StatelessWidget {
             ),
             const Padding(
                 padding: EdgeInsets.fromLTRB(16, 24, 16, 16),
-                child: Text("Rare achievements",
+                child: Text("Course achievements",
                     style: TextStyle(
                         fontSize: 24,
                         fontWeight: FontWeight.w700,

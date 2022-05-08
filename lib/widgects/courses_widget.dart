@@ -33,14 +33,31 @@ class Courses extends StatelessWidget {
               padding: const EdgeInsets.fromLTRB(16, 0, 16, 0),
               child: Column(
                 children: <Widget>[
-                  for(var course in courses) BlocBuilder<UserLogsBloc, UserLogsState>(
-                      builder: (context, state) {
+                  if (courses.isEmpty) ...[
+                    const Center(
+                      child: Padding(
+                        padding: EdgeInsets.fromLTRB(16, 0, 16, 32),
+                        child: Text('You dont have courses yet',
+                            style: TextStyle(
+                                fontSize: 20,
+                                fontWeight: FontWeight.w400,
+                                color: Color.fromRGBO(93, 92, 99, 1))),
+                      ),
+                    )
+                  ] else ...[
+                    for (var course in courses)
+                      BlocBuilder<UserLogsBloc, UserLogsState>(
+                          builder: (context, state) {
                         if (state is UserLogsLoaded) {
-                          return CourseWidget(course: course['course'], userLogs: state.userLogs,);
+                          return CourseWidget(
+                            course: course['course'],
+                            userLogs: state.userLogs,
+                          );
                         } else {
                           return Container();
                         }
                       })
+                  ]
                 ],
               ),
             )

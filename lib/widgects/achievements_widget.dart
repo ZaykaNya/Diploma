@@ -24,7 +24,7 @@ class Achievements extends StatelessWidget {
               color: Color.fromRGBO(218, 220, 239, 1),
             ),
             const Padding(padding: EdgeInsets.fromLTRB(16, 24, 16, 16),
-                child: Text("Common achievements", style: TextStyle(
+                child: Text("Global achievements", style: TextStyle(
                     fontSize: 24,
                     fontWeight: FontWeight.w700,
                     color: Color.fromRGBO(93, 92, 99, 1)))),

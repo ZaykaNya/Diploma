@@ -1,6 +1,7 @@
 import 'package:diplom/models/log.dart';
 
 class Calculator {
+  /// Counts progress for course
   int countProgress(userLogs, course) {
     int progress = 0;
     double time = 0;
@@ -16,6 +17,7 @@ class Calculator {
     return progress;
   }
 
+  /// Counts time spent on course
   double countTime(userLogs, course) {
     double time = 0;
 
@@ -28,6 +30,7 @@ class Calculator {
     return double.parse(time.toStringAsPrecision(1));
   }
 
+  /// Counts daily activity
   double countDailyProgress(logs) {
     double progress = 0;
 
@@ -38,6 +41,7 @@ class Calculator {
     return progress.roundToDouble();
   }
 
+  /// Counts number of completed and inProgress courses
   List<int> countCompletedCourses(courses, userLogs) {
     int completedCourses = 0;
     int inProgressCourses = 0;

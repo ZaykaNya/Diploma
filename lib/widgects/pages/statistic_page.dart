@@ -78,7 +78,7 @@ class _StatisticPageState extends State<StatisticPage> {
           backgroundColor: const Color.fromRGBO(80, 71, 153, 1),
           toolbarHeight: 54,
           title: const Text('Profile',
-              style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold)),
+              style: TextStyle(fontSize: 24, fontWeight: FontWeight.w600)),
           actions: <Widget>[
             IconButton(
               padding: const EdgeInsets.only(right: 8),
@@ -162,7 +162,6 @@ class _StatisticPageState extends State<StatisticPage> {
                   return Column(
                     children: const [
                       Achievements(),
-                      RareAchievements(),
                     ],
                   );
                 } else if (state.navbarItem == NavbarItem.history) {
