@@ -42,6 +42,7 @@ dependencies:
   formz: ^0.4.1
   google_fonts: ^2.1.0
   syncfusion_flutter_gauges: ^20.1.51
+  syncfusion_flutter_charts: ^20.1.52
 
 dev_dependencies:
   flutter_test:
