@@ -15,6 +15,7 @@ import 'package:diplom/widgects/rare_achievements_widget.dart';
 import 'package:diplom/widgects/statistic_widjet.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class CoursePage extends StatefulWidget {
   final String course;
@@ -33,6 +34,15 @@ class CoursePage extends StatefulWidget {
 }
 
 class _CoursePageState extends State<CoursePage> with TickerProviderStateMixin {
+
+  launchURL(String url) async {
+    if(await canLaunch(url)) {
+      await launch(url);
+    } else {
+      throw 'Could not launch $url';
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     TabController _tabController = TabController(length: 2, vsync: this);
@@ -66,6 +76,28 @@ class _CoursePageState extends State<CoursePage> with TickerProviderStateMixin {
               }
             },
           ),
+          Padding(
+            padding: const EdgeInsets.fromLTRB(16, 0, 16, 24),
+            child: ElevatedButton(
+              onPressed: () {
+                final url = 'http://semantic-portal.net/my:course:${widget.course.toLowerCase()}';
+
+                launchURL(url);
+              },
+              child: const Text(
+                "Go to course",
+                style: TextStyle(
+                  fontSize: 20,
+                  fontWeight: FontWeight.w600,
+                )
+              ),
+              style: ElevatedButton.styleFrom(
+                  minimumSize: const Size.fromHeight(48),
+                  padding: const EdgeInsets.symmetric(horizontal: 16),
+                  primary: const Color.fromRGBO(41, 215, 41, 1),
+              ),
+            ),
+          ),
           TabBar(
             labelColor: const Color.fromRGBO(41, 215, 41, 1),
             unselectedLabelColor: const Color.fromRGBO(140, 138, 149, 1),
@@ -83,7 +115,7 @@ class _CoursePageState extends State<CoursePage> with TickerProviderStateMixin {
           ),
           Container(
             width: double.maxFinite,
-            height: MediaQuery.of(context).size.height - 220,
+            height: MediaQuery.of(context).size.height - 292,
             child: TabBarView(
               controller: _tabController,
               children: [

@@ -43,6 +43,7 @@ dependencies:
   google_fonts: ^2.1.0
   syncfusion_flutter_gauges: ^20.1.51
   syncfusion_flutter_charts: ^20.1.52
+  url_launcher: ^6.1.0
 
 dev_dependencies:
   flutter_test:
