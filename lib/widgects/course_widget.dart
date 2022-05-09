@@ -1,8 +1,13 @@
 import 'dart:ui';
 
+import 'package:diplom/authentication/authentication_bloc.dart';
+import 'package:diplom/blocs/userLogs/user_logs_bloc.dart';
+import 'package:diplom/blocs/weekLogs/week_logs_bloc.dart';
+import 'package:diplom/blocs/weekLogs/week_logs_event.dart';
 import 'package:diplom/models/log.dart';
 import 'package:diplom/widgects/pages/course_page.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../utils/calculator.dart';
 
@@ -39,6 +44,7 @@ class _CourseWidgetState extends State<CourseWidget> {
 
   @override
   Widget build(BuildContext context) {
+    final userWeekLogsBloc = BlocProvider.of<WeekLogsBloc>(context);
     return OutlinedButton(
       style: OutlinedButton.styleFrom(
         padding: const EdgeInsets.all(0),
@@ -129,12 +135,18 @@ class _CourseWidgetState extends State<CourseWidget> {
         ],
       ),
       onPressed: () {
+        DateTime weekAgo = DateTime.now().subtract(const Duration(days: 6));
+        userWeekLogsBloc.add(GetWeekLogs(
+            id: '140',
+            time: '${weekAgo.year}-${weekAgo.month}-${weekAgo.day}'));
         Navigator.push(
           context,
           MaterialPageRoute(
               builder: (context) => CoursePage(
-                  course: widget.course.capitalize(),
-                  courseProgress: _progress)),
+                    course: widget.course.capitalize(),
+                    courseProgress: _progress,
+                    timeSpent: _time
+                  )),
         );
       },
     );

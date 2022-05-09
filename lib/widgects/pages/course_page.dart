@@ -2,6 +2,8 @@ import 'dart:ui';
 
 import 'package:diplom/blocs/user/user_bloc.dart';
 import 'package:diplom/blocs/user/user_state.dart';
+import 'package:diplom/blocs/weekLogs/week_logs_bloc.dart';
+import 'package:diplom/blocs/weekLogs/week_logs_state.dart';
 import 'package:diplom/widgects/profile.dart';
 import 'package:diplom/widgects/rare_achievements_widget.dart';
 import 'package:diplom/widgects/statistic_widjet.dart';
@@ -10,9 +12,15 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 
 class CoursePage extends StatefulWidget {
   final String course;
+  final double timeSpent;
   final int courseProgress;
 
-  const CoursePage({Key? key, required this.course, required this.courseProgress}) : super(key: key);
+  const CoursePage(
+      {Key? key,
+      required this.course,
+      required this.courseProgress,
+      required this.timeSpent})
+      : super(key: key);
 
   @override
   State<CoursePage> createState() => _CoursePageState();
@@ -74,7 +82,19 @@ class _CoursePageState extends State<CoursePage> with TickerProviderStateMixin {
               controller: _tabController,
               children: [
                 SingleChildScrollView(
-                  child: StatisticWidget(courseProgress: widget.courseProgress)
+                  child: BlocBuilder<WeekLogsBloc, WeekLogsState>(
+                      builder: (context, state) {
+                    if (state is WeekLogsLoaded) {
+                      return StatisticWidget(
+                        courseProgress: widget.courseProgress,
+                        userWeekLogs: state.userWeekLogs,
+                        course: widget.course,
+                        timeSpent: widget.timeSpent,
+                      );
+                    } else {
+                      return Container();
+                    }
+                  }),
                 ),
                 const SingleChildScrollView(
                   child: RareAchievements(),

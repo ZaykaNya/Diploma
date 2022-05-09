@@ -201,12 +201,12 @@ class _StatisticPageState extends State<StatisticPage> {
         bottomNavigationBar: BottomNavigationBar(
           items: const <BottomNavigationBarItem>[
             BottomNavigationBarItem(
-              icon: Icon(Icons.search),
-              label: 'Statistic',
+              icon: Icon(Icons.home),
+              label: 'Home Page',
             ),
             BottomNavigationBarItem(
               icon: Icon(Icons.add_alert),
-              label: 'Progress',
+              label: 'Achievements',
             ),
             BottomNavigationBarItem(
               icon: Icon(Icons.account_circle),

@@ -11,6 +11,8 @@ import 'package:diplom/widgects/pages/statistic_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
+DateTime getDate(DateTime d) => DateTime(d.year, d.month, d.day);
+
 class HomePage extends StatefulWidget {
   const HomePage({Key? key}) : super(key: key);
 

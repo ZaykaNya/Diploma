@@ -6,6 +6,7 @@ import 'package:diplom/blocs/logs/logs_bloc.dart';
 import 'package:diplom/blocs/user/user_bloc.dart';
 import 'package:diplom/blocs/userLogs/user_logs_bloc.dart';
 import 'package:diplom/blocs/userTests/user_tests_bloc.dart';
+import 'package:diplom/blocs/weekLogs/week_logs_bloc.dart';
 import 'package:diplom/navigation/navigation_cubit.dart';
 import 'package:diplom/widgects/logic_page.dart';
 import 'package:diplom/widgects/splash.dart';
@@ -47,6 +48,9 @@ class App extends StatelessWidget {
           ),
           BlocProvider<UserTestsBloc>(
             create: (_) => UserTestsBloc(),
+          ),
+          BlocProvider<WeekLogsBloc>(
+            create: (_) => WeekLogsBloc(),
           ),
         ],
         child: AppView(),

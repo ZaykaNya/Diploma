@@ -1,4 +1,6 @@
+import 'package:diplom/models/chart_data.dart';
 import 'package:diplom/models/log.dart';
+import 'package:intl/intl.dart';
 
 class Calculator {
   /// Counts progress for course
@@ -69,32 +71,60 @@ class Calculator {
     return [completedCourses, inProgressCourses];
   }
 
+  /// check which global achievements are completed
   List<int> getGlobalAchievements(courses, userLogs, userTests) {
     List<int> achievements = [];
     String bestMark = '0';
 
-    if(courses.length > 0) {
+    if (courses.length > 0) {
       achievements.add(1);
     }
 
-    if(countCompletedCourses(courses, userLogs)[0] > 0) {
+    if (countCompletedCourses(courses, userLogs)[0] > 0) {
       achievements.add(2);
     }
 
-    if(userTests.length > 0) {
+    if (userTests.length > 0) {
       achievements.add(3);
     }
 
-    for(var userTest in userTests) {
-      if(userTest.percentage == '100') {
+    for (var userTest in userTests) {
+      if (userTest.percentage == '100') {
         bestMark = '100';
       }
     }
 
-    if(bestMark == '100') {
+    if (bestMark == '100') {
       achievements.add(4);
     }
 
     return achievements;
+  }
+
+  /// check which course achievements are completed
+  List<int> getCourseAchievements(courses, userLogs, userTests) {
+    List<int> achievements = [];
+
+    return achievements;
+  }
+
+  /// calculates time spent every day on course through last 7 days
+  List<ChartData> getTimeChartData(userWeekLogs, course) {
+    List<ChartData> chartData = <ChartData>[];
+    DateTime weekAgo = DateTime.now().subtract(const Duration(days: 6));
+
+    for (int i = 0; i < 7; i++) {
+      String currentDay = DateFormat('EEEE').format(DateTime.now().subtract(Duration(days: 6 - i)));
+      String currentDate = DateFormat('yyyy-MM-dd').format(DateTime.now().subtract(Duration(days: 6 - i)));
+      List<UserLog> currentDayLogs = [];
+      currentDayLogs.addAll(userWeekLogs);
+      currentDayLogs.retainWhere((UserLog userLog) => userLog.time!.contains(currentDate));
+
+      chartData.add(ChartData(
+          '${currentDay[0]}${currentDay[1]}${currentDay[2]}',
+          countTime(currentDayLogs, course.toLowerCase())));
+    }
+
+    return chartData;
   }
 }
