@@ -4,6 +4,7 @@ import 'package:diplom/api/tests.dart';
 import 'package:diplom/api/users.dart';
 import 'package:diplom/models/auth_user.dart';
 import 'package:diplom/models/log.dart';
+import 'package:diplom/models/mark.dart';
 import 'package:diplom/models/test.dart';
 import 'package:diplom/models/user.dart';
 import 'package:http/http.dart' as http;
@@ -38,5 +39,13 @@ class UserRepository {
 
   Future<List<Test>> getUserTestsResult(id) async {
     return fetchTestsByUserId(id);
+  }
+
+  Future<List<Test>> getCourseTests(course) async {
+    return fetchTestsFromCourse(course);
+  }
+
+  Future<Mark> getUserBestMark(id, course) async {
+    return fetchUserBestCourseMarkById(id, course);
   }
 }

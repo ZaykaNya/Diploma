@@ -2,8 +2,10 @@ import 'package:diplom/authentication/authentication_bloc.dart';
 import 'package:diplom/authentication/authentication_repository.dart';
 import 'package:diplom/authentication/authentication_state.dart';
 import 'package:diplom/authentication/user_repository.dart';
+import 'package:diplom/blocs/courseTests/course_tests_bloc.dart';
 import 'package:diplom/blocs/logs/logs_bloc.dart';
 import 'package:diplom/blocs/user/user_bloc.dart';
+import 'package:diplom/blocs/userBestMark/user_best_mark_bloc.dart';
 import 'package:diplom/blocs/userLogs/user_logs_bloc.dart';
 import 'package:diplom/blocs/userTests/user_tests_bloc.dart';
 import 'package:diplom/blocs/weekLogs/week_logs_bloc.dart';
@@ -51,6 +53,12 @@ class App extends StatelessWidget {
           ),
           BlocProvider<WeekLogsBloc>(
             create: (_) => WeekLogsBloc(),
+          ),
+          BlocProvider<UserBestMarkBloc>(
+            create: (_) => UserBestMarkBloc(),
+          ),
+          BlocProvider<CourseTestsBloc>(
+            create: (_) => CourseTestsBloc(),
           ),
         ],
         child: AppView(),

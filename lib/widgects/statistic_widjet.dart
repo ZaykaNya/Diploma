@@ -2,6 +2,8 @@ import 'dart:ui';
 
 import 'package:diplom/models/chart_data.dart';
 import 'package:diplom/models/log.dart';
+import 'package:diplom/models/mark.dart';
+import 'package:diplom/models/test.dart';
 import 'package:diplom/utils/calculator.dart';
 import 'package:flutter/material.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
@@ -11,6 +13,8 @@ class StatisticWidget extends StatefulWidget {
   final int courseProgress;
   final String course;
   final double timeSpent;
+  final Mark bestMark;
+  final List<Test> courseTests;
   final List<UserLog> userWeekLogs;
 
   const StatisticWidget(
@@ -18,6 +22,8 @@ class StatisticWidget extends StatefulWidget {
       required this.courseProgress,
       required this.userWeekLogs,
       required this.course,
+      required this.bestMark,
+      required this.courseTests,
       required this.timeSpent})
       : super(key: key);
 
@@ -34,11 +40,8 @@ class _StatisticWidgetState extends State<StatisticWidget> {
     Calculator calculator = Calculator();
     _timeChartData =
         calculator.getTimeChartData(widget.userWeekLogs, widget.course);
-
-    _testChartData = <ChartData>[
-      ChartData('Average', 58),
-      ChartData('You`re best', 100),
-    ];
+    _testChartData =
+        calculator.getTestsChartData(widget.courseTests, widget.bestMark);
     super.initState();
   }
 

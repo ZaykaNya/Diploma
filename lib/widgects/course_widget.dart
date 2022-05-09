@@ -1,15 +1,16 @@
 import 'dart:ui';
 
-import 'package:diplom/authentication/authentication_bloc.dart';
-import 'package:diplom/blocs/userLogs/user_logs_bloc.dart';
+import 'package:diplom/blocs/courseTests/course_tests_bloc.dart';
+import 'package:diplom/blocs/courseTests/course_tests_event.dart';
+import 'package:diplom/blocs/userBestMark/user_best_mark_bloc.dart';
+import 'package:diplom/blocs/userBestMark/user_best_mark_event.dart';
 import 'package:diplom/blocs/weekLogs/week_logs_bloc.dart';
 import 'package:diplom/blocs/weekLogs/week_logs_event.dart';
 import 'package:diplom/models/log.dart';
+import 'package:diplom/utils/calculator.dart';
 import 'package:diplom/widgects/pages/course_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-
-import '../utils/calculator.dart';
 
 extension StringExtension on String {
   String capitalize() {
@@ -19,9 +20,14 @@ extension StringExtension on String {
 
 class CourseWidget extends StatefulWidget {
   final String course;
+  final String userId;
   final List<UserLog> userLogs;
 
-  const CourseWidget({Key? key, required this.course, required this.userLogs})
+  const CourseWidget(
+      {Key? key,
+      required this.course,
+      required this.userId,
+      required this.userLogs})
       : super(key: key);
 
   @override
@@ -45,6 +51,8 @@ class _CourseWidgetState extends State<CourseWidget> {
   @override
   Widget build(BuildContext context) {
     final userWeekLogsBloc = BlocProvider.of<WeekLogsBloc>(context);
+    final userBestMarkBloc = BlocProvider.of<UserBestMarkBloc>(context);
+    final courseTestsBloc = BlocProvider.of<CourseTestsBloc>(context);
     return OutlinedButton(
       style: OutlinedButton.styleFrom(
         padding: const EdgeInsets.all(0),
@@ -137,16 +145,17 @@ class _CourseWidgetState extends State<CourseWidget> {
       onPressed: () {
         DateTime weekAgo = DateTime.now().subtract(const Duration(days: 6));
         userWeekLogsBloc.add(GetWeekLogs(
-            id: '140',
+            id: widget.userId,
             time: '${weekAgo.year}-${weekAgo.month}-${weekAgo.day}'));
+        userBestMarkBloc.add(GetUserBestMark(id: widget.userId, course: widget.course));
+        courseTestsBloc.add(GetCourseTests(course: widget.course));
         Navigator.push(
           context,
           MaterialPageRoute(
               builder: (context) => CoursePage(
-                    course: widget.course.capitalize(),
-                    courseProgress: _progress,
-                    timeSpent: _time
-                  )),
+                  course: widget.course.capitalize(),
+                  courseProgress: _progress,
+                  timeSpent: _time)),
         );
       },
     );

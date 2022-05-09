@@ -1,5 +1,7 @@
 import 'package:diplom/models/chart_data.dart';
 import 'package:diplom/models/log.dart';
+import 'package:diplom/models/mark.dart';
+import 'package:diplom/models/test.dart';
 import 'package:intl/intl.dart';
 
 class Calculator {
@@ -7,14 +9,19 @@ class Calculator {
   int countProgress(userLogs, course) {
     int progress = 0;
     double time = 0;
+    final splittedCourse = course.split('-')[0];
 
     for (UserLog userLog in userLogs) {
-      if (userLog.contentId!.contains(course)) {
+      if (userLog.contentId!.contains(course) || userLog.contentId!.contains(splittedCourse)) {
         time += int.parse(userLog.seconds.toString());
       }
     }
 
     progress = (time / 30).round();
+
+    if(progress > 100) {
+      progress = 100;
+    }
 
     return progress;
   }
@@ -22,9 +29,10 @@ class Calculator {
   /// Counts time spent on course
   double countTime(userLogs, course) {
     double time = 0;
+    final splittedCourse = course.split('-')[0];
 
     for (UserLog userLog in userLogs) {
-      if (userLog.contentId!.contains(course)) {
+      if (userLog.contentId!.contains(course) || userLog.contentId!.contains(splittedCourse)) {
         time += int.parse(userLog.seconds.toString()) / 3600;
       }
     }
@@ -38,6 +46,10 @@ class Calculator {
 
     for (UserLog userLog in logs) {
       progress += int.parse(userLog.seconds.toString());
+    }
+
+    if(progress > 100) {
+      progress = 100;
     }
 
     return progress.roundToDouble();
@@ -102,8 +114,22 @@ class Calculator {
   }
 
   /// check which course achievements are completed
-  List<int> getCourseAchievements(courses, userLogs, userTests) {
+  List<int> getCourseAchievements(Mark bestMark, course, userLogs) {
     List<int> achievements = [];
+
+    if(countTime(userLogs, course.toLowerCase()) > 0) {
+      achievements.add(1);
+    }
+
+    if(bestMark.mark != null) {
+      if(int.parse(bestMark.mark!) > 80) {
+        achievements.add(2);
+      }
+    }
+
+    if(countProgress(userLogs, course) >= 100) {
+      achievements.add(3);
+    }
 
     return achievements;
   }
@@ -111,7 +137,6 @@ class Calculator {
   /// calculates time spent every day on course through last 7 days
   List<ChartData> getTimeChartData(userWeekLogs, course) {
     List<ChartData> chartData = <ChartData>[];
-    DateTime weekAgo = DateTime.now().subtract(const Duration(days: 6));
 
     for (int i = 0; i < 7; i++) {
       String currentDay = DateFormat('EEEE').format(DateTime.now().subtract(Duration(days: 6 - i)));
@@ -124,6 +149,34 @@ class Calculator {
           '${currentDay[0]}${currentDay[1]}${currentDay[2]}',
           countTime(currentDayLogs, course.toLowerCase())));
     }
+
+    return chartData;
+  }
+
+  double getAverageTestsResult(data) {
+    double averageMark = 0;
+    int counter = 0;
+
+    for(var elem in data) {
+      averageMark += int.parse(elem.percentage.toString());
+      counter++;
+    }
+
+    averageMark /= counter;
+
+    return averageMark.roundToDouble();
+  }
+
+  List<ChartData> getTestsChartData(courseTests, Mark bestMark) {
+    List<ChartData> chartData = <ChartData>[];
+
+    chartData.add(ChartData('Average', getAverageTestsResult(courseTests)));
+    if(bestMark.mark != null) {
+      chartData.add(ChartData('You`re best', double.parse(bestMark.mark.toString())));
+    } else {
+      chartData.add(ChartData('You`re best', 0));
+    }
+
 
     return chartData;
   }

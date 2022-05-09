@@ -153,7 +153,9 @@ class _StatisticPageState extends State<StatisticPage> {
                       BlocBuilder<UserBloc, UserState>(
                           builder: (context, state) {
                         if (state is UserLoaded) {
-                          return Courses(courses: state.user.courses);
+                          return Courses(
+                              courses: state.user.courses,
+                              userId: widget.userId);
                         } else {
                           return Container();
                         }

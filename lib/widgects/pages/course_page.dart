@@ -1,7 +1,13 @@
 import 'dart:ui';
 
+import 'package:diplom/blocs/courseTests/course_tests_bloc.dart';
+import 'package:diplom/blocs/courseTests/course_tests_state.dart';
 import 'package:diplom/blocs/user/user_bloc.dart';
 import 'package:diplom/blocs/user/user_state.dart';
+import 'package:diplom/blocs/userBestMark/user_best_mark_bloc.dart';
+import 'package:diplom/blocs/userBestMark/user_best_mark_state.dart';
+import 'package:diplom/blocs/userLogs/user_logs_bloc.dart';
+import 'package:diplom/blocs/userLogs/user_logs_state.dart';
 import 'package:diplom/blocs/weekLogs/week_logs_bloc.dart';
 import 'package:diplom/blocs/weekLogs/week_logs_state.dart';
 import 'package:diplom/widgects/profile.dart';
@@ -83,21 +89,56 @@ class _CoursePageState extends State<CoursePage> with TickerProviderStateMixin {
               children: [
                 SingleChildScrollView(
                   child: BlocBuilder<WeekLogsBloc, WeekLogsState>(
-                      builder: (context, state) {
-                    if (state is WeekLogsLoaded) {
-                      return StatisticWidget(
-                        courseProgress: widget.courseProgress,
-                        userWeekLogs: state.userWeekLogs,
-                        course: widget.course,
-                        timeSpent: widget.timeSpent,
-                      );
+                      builder: (context, weekLogsState) {
+                    if (weekLogsState is WeekLogsLoaded) {
+                      return BlocBuilder<UserBestMarkBloc, UserBestMarkState>(
+                          builder: (context, userBestMarkState) {
+                        if (userBestMarkState is UserBestMarkLoaded) {
+                          return BlocBuilder<CourseTestsBloc, CourseTestsState>(
+                              builder: (context, courseTestsState) {
+                            if (courseTestsState is CourseTestsLoaded) {
+                              return StatisticWidget(
+                                courseProgress: widget.courseProgress,
+                                userWeekLogs: weekLogsState.userWeekLogs,
+                                course: widget.course,
+                                timeSpent: widget.timeSpent,
+                                bestMark: userBestMarkState.userBestMark,
+                                courseTests: courseTestsState.courseTests,
+                              );
+                            } else {
+                              return Container();
+                            }
+                          });
+                        } else {
+                          return Container();
+                        }
+                      });
                     } else {
                       return Container();
                     }
                   }),
                 ),
-                const SingleChildScrollView(
-                  child: RareAchievements(),
+                SingleChildScrollView(
+                  child: BlocBuilder<UserBestMarkBloc, UserBestMarkState>(
+                      builder: (context, userBestMarkState) {
+                    if (userBestMarkState is UserBestMarkLoaded) {
+                      return BlocBuilder<UserLogsBloc, UserLogsState>(
+                          builder: (context, userLogsState) {
+                            if (userLogsState is UserLogsLoaded) {
+                              return RareAchievements(
+                                  course: widget.course,
+                                  bestMark: userBestMarkState.userBestMark,
+                                  userLogs: userLogsState.userLogs
+                              );
+                            } else {
+                              return Container();
+                            }
+                          });
+
+                    } else {
+                      return Container();
+                    }
+                  }),
                 ),
               ],
             ),

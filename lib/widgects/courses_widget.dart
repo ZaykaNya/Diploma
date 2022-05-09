@@ -7,8 +7,10 @@ import 'course_widget.dart';
 
 class Courses extends StatelessWidget {
   final List<dynamic> courses;
+  final String userId;
 
-  const Courses({Key? key, required this.courses}) : super(key: key);
+  const Courses({Key? key, required this.courses, required this.userId})
+      : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -51,6 +53,7 @@ class Courses extends StatelessWidget {
                         if (state is UserLogsLoaded) {
                           return CourseWidget(
                             course: course['course'],
+                            userId: userId,
                             userLogs: state.userLogs,
                           );
                         } else {
