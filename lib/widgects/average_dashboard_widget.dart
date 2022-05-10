@@ -20,6 +20,7 @@ class _AverageDashboardState extends State<AverageDashboard> {
   double _dailyProgress = 0;
   int _completedCourses = 0;
   int _inProgressCourses = 0;
+  String _message = "Lets learn something new today";
 
   @override
   void initState() {
@@ -29,6 +30,7 @@ class _AverageDashboardState extends State<AverageDashboard> {
       _dailyProgress = calculator.countDailyProgress(widget.logs);
       _completedCourses = coursesProgress[0];
       _inProgressCourses = coursesProgress[1];
+      _message = calculator.getDailyProgressMessage(_dailyProgress);
     });
     super.initState();
   }
@@ -98,8 +100,8 @@ class _AverageDashboardState extends State<AverageDashboard> {
             ),
             Container(
               transform: Matrix4.translationValues(0.0, -35.0, 0.0),
-              child: const Text("Файно, візьми паляничку!",
-                  style: TextStyle(
+              child: Text(_message,
+                  style: const TextStyle(
                       fontSize: 20,
                       fontWeight: FontWeight.w600,
                       color: Color.fromRGBO(93, 92, 99, 1))),

@@ -55,6 +55,21 @@ class Calculator {
     return progress.roundToDouble();
   }
 
+  String getDailyProgressMessage(progress) {
+    if(progress == 100) {
+      return 'You did a great work today. Be proud!';
+    } else if(progress >= 75) {
+      return 'You made decent work today!';
+    } else if(progress >= 50) {
+      return "Half way passed! Don't stop!";
+    } else if(progress >= 25) {
+      return 'Good start. Keep it up!';
+    } else {
+      return 'Lets learn something new today';
+    }
+
+  }
+
   /// Counts number of completed and inProgress courses
   List<int> countCompletedCourses(courses, userLogs) {
     int completedCourses = 0;
