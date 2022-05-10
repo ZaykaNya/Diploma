@@ -49,16 +49,19 @@ class CourseUser {
 class ShortCourse {
   final String course;
   final String caption;
+  final String image;
 
   const ShortCourse({
     required this.course,
     required this.caption,
+    required this.image,
   });
 
   factory ShortCourse.fromJson(Map<String, dynamic> json) {
     return ShortCourse(
       course: json['course'],
       caption: json['caption'],
+      image: json['image'],
     );
   }
 }

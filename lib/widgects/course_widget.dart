@@ -1,5 +1,8 @@
 import 'dart:ui';
 
+import 'package:diplom/blocs/course/course_bloc.dart';
+import 'package:diplom/blocs/course/course_event.dart';
+import 'package:diplom/blocs/course/course_state.dart';
 import 'package:diplom/blocs/courseTests/course_tests_bloc.dart';
 import 'package:diplom/blocs/courseTests/course_tests_event.dart';
 import 'package:diplom/blocs/userBestMark/user_best_mark_bloc.dart';
@@ -21,12 +24,14 @@ extension StringExtension on String {
 class CourseWidget extends StatefulWidget {
   final String course;
   final String userId;
+  final CourseBloc courseBloc;
   final List<UserLog> userLogs;
 
   const CourseWidget(
       {Key? key,
       required this.course,
       required this.userId,
+      required this.courseBloc,
       required this.userLogs})
       : super(key: key);
 
@@ -45,6 +50,7 @@ class _CourseWidgetState extends State<CourseWidget> {
       _progress = calculator.countProgress(widget.userLogs, widget.course);
       _time = calculator.countTime(widget.userLogs, widget.course);
     });
+    // print(widget.image);
     super.initState();
   }
 
@@ -53,6 +59,7 @@ class _CourseWidgetState extends State<CourseWidget> {
     final userWeekLogsBloc = BlocProvider.of<WeekLogsBloc>(context);
     final userBestMarkBloc = BlocProvider.of<UserBestMarkBloc>(context);
     final courseTestsBloc = BlocProvider.of<CourseTestsBloc>(context);
+    widget.courseBloc.add(GetCourse(course: widget.course));
     return OutlinedButton(
       style: OutlinedButton.styleFrom(
         padding: const EdgeInsets.all(0),
@@ -66,7 +73,19 @@ class _CourseWidgetState extends State<CourseWidget> {
             mainAxisAlignment: MainAxisAlignment.start,
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              Image.asset('assets/images/react_icon.png'),
+              BlocBuilder<CourseBloc, CourseState>(
+                  builder: (context, courseState) {
+                    if (courseState is CourseLoaded) {
+                      final String image = 'http://semantic-portal.net/images/${courseState.course.course.image}';
+                      if(courseState.course.course.image != "") {
+                        return Image.network(image, height: 103, width: 103);
+                      } else {
+                        return Image.asset('assets/images/react_icon.png');
+                      }
+                    } else {
+                      return Container();
+                    }
+                  }),
               const Padding(padding: EdgeInsets.only(right: 16)),
               Expanded(
                 child: Column(

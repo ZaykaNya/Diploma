@@ -1,4 +1,8 @@
+import 'dart:collection';
 import 'dart:ui';
+import 'package:diplom/blocs/course/course_bloc.dart';
+import 'package:diplom/blocs/course/course_event.dart';
+import 'package:diplom/blocs/course/course_state.dart';
 import 'package:diplom/blocs/userLogs/user_logs_bloc.dart';
 import 'package:diplom/blocs/userLogs/user_logs_state.dart';
 import 'package:flutter/material.dart';
@@ -39,7 +43,7 @@ class Courses extends StatelessWidget {
                     const Center(
                       child: Padding(
                         padding: EdgeInsets.fromLTRB(16, 0, 16, 32),
-                        child: Text('You dont have courses yet',
+                        child: Text("You don't have courses yet",
                             style: TextStyle(
                                 fontSize: 20,
                                 fontWeight: FontWeight.w400,
@@ -48,18 +52,24 @@ class Courses extends StatelessWidget {
                     )
                   ] else ...[
                     for (var course in courses)
-                      BlocBuilder<UserLogsBloc, UserLogsState>(
-                          builder: (context, state) {
-                        if (state is UserLogsLoaded) {
-                          return CourseWidget(
-                            course: course['course'],
-                            userId: userId,
-                            userLogs: state.userLogs,
-                          );
-                        } else {
-                          return Container();
-                        }
-                      })
+                      BlocProvider<CourseBloc>(
+                        create: (_) => CourseBloc(),
+                        child: BlocBuilder<UserLogsBloc, UserLogsState>(
+                            builder: (context, userState) {
+                          final courseBloc =
+                              BlocProvider.of<CourseBloc>(context);
+                          if (userState is UserLogsLoaded) {
+                            return CourseWidget(
+                              course: course['course'],
+                              userId: userId,
+                              userLogs: userState.userLogs,
+                              courseBloc: courseBloc,
+                            );
+                          } else {
+                            return Container();
+                          }
+                        }),
+                      ),
                   ]
                 ],
               ),
