@@ -207,11 +207,11 @@ class _StatisticPageState extends State<StatisticPage> {
               label: 'Home Page',
             ),
             BottomNavigationBarItem(
-              icon: Icon(Icons.add_alert),
+              icon: Icon(Icons.wine_bar),
               label: 'Achievements',
             ),
             BottomNavigationBarItem(
-              icon: Icon(Icons.account_circle),
+              icon: Icon(Icons.timelapse),
               label: 'History',
             ),
           ],
