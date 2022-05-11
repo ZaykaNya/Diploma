@@ -1,6 +1,7 @@
 import 'package:diplom/authentication/user_repository.dart';
 import 'package:diplom/blocs/course/course_event.dart';
 import 'package:diplom/blocs/course/course_state.dart';
+import 'package:diplom/models/course.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 class CourseBloc extends Bloc<CourseEvent, CourseState> {

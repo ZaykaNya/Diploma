@@ -1,23 +1,31 @@
 import 'package:diplom/models/chart_data.dart';
 import 'package:diplom/models/log.dart';
 import 'package:diplom/models/mark.dart';
-import 'package:diplom/models/test.dart';
 import 'package:intl/intl.dart';
 
 class Calculator {
-  /// Counts progress for course
-  int countProgress(userLogs, course) {
+  /// Counts progress for course by time spent on branches (2 hours to complete)
+  int countProgress(userLogs, course, branches) {
     int progress = 0;
     double time = 0;
-    final splittedCourse = course.split('-')[0];
 
-    for (UserLog userLog in userLogs) {
-      if (userLog.contentId!.contains(course) || userLog.contentId!.contains(splittedCourse)) {
-        time += int.parse(userLog.seconds.toString());
+    for(String branch in branches) {
+      double branchTime = 0;
+
+      for (UserLog userLog in userLogs) {
+        if(userLog.contentId!.contains(branch)) {
+          branchTime += int.parse(userLog.seconds.toString());
+        }
+
+        if(branchTime > 7200 / branches.length) {
+          branchTime = 7200 / branches.length;
+        }
       }
+
+      time += branchTime;
     }
 
-    progress = (time / 30).round();
+    progress = (time / 72).round();
 
     if(progress > 100) {
       progress = 100;
@@ -40,13 +48,15 @@ class Calculator {
     return double.parse(time.toStringAsPrecision(1));
   }
 
-  /// Counts daily activity
+  /// Counts daily activity (45 minutes = 100%)
   double countDailyProgress(logs) {
     double progress = 0;
 
     for (UserLog userLog in logs) {
       progress += int.parse(userLog.seconds.toString());
     }
+
+    progress /= 27;
 
     if(progress > 100) {
       progress = 100;
@@ -67,7 +77,6 @@ class Calculator {
     } else {
       return 'Lets learn something new today';
     }
-
   }
 
   /// Counts number of completed and inProgress courses
@@ -129,7 +138,7 @@ class Calculator {
   }
 
   /// check which course achievements are completed
-  List<int> getCourseAchievements(Mark bestMark, course, userLogs) {
+  List<int> getCourseAchievements(Mark bestMark, course, userLogs, branches) {
     List<int> achievements = [];
 
     if(countTime(userLogs, course.toLowerCase()) > 0) {
@@ -142,7 +151,7 @@ class Calculator {
       }
     }
 
-    if(countProgress(userLogs, course) >= 100) {
+    if(countProgress(userLogs, course, branches) >= 100) {
       achievements.add(3);
     }
 

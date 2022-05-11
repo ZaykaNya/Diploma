@@ -1,5 +1,6 @@
 import 'dart:ui';
 
+import 'package:diplom/api/courses.dart';
 import 'package:diplom/blocs/course/course_bloc.dart';
 import 'package:diplom/blocs/course/course_event.dart';
 import 'package:diplom/blocs/course/course_state.dart';
@@ -45,12 +46,13 @@ class _CourseWidgetState extends State<CourseWidget> {
 
   @override
   void initState() {
-    final Calculator calculator = Calculator();
-    setState(() {
-      _progress = calculator.countProgress(widget.userLogs, widget.course);
-      _time = calculator.countTime(widget.userLogs, widget.course);
+    fetchCoursesByName(widget.course).then((value) {
+      final Calculator calculator = Calculator();
+      setState(() {
+        _progress = calculator.countProgress(widget.userLogs, widget.course, value.branches);
+        _time = calculator.countTime(widget.userLogs, widget.course);
+      });
     });
-    // print(widget.image);
     super.initState();
   }
 

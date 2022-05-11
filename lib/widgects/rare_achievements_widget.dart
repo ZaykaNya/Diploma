@@ -1,5 +1,6 @@
 import 'dart:ui';
 
+import 'package:diplom/api/courses.dart';
 import 'package:diplom/models/log.dart';
 import 'package:diplom/models/mark.dart';
 import 'package:diplom/utils/calculator.dart';
@@ -9,9 +10,10 @@ import 'package:flutter/material.dart';
 class RareAchievements extends StatefulWidget {
   final String course;
   final Mark bestMark;
+  final List<String> branches;
   final List<UserLog> userLogs;
 
-  const RareAchievements({Key? key, required this.course, required this.bestMark, required this.userLogs})
+  const RareAchievements({Key? key, required this.course, required this.bestMark, required this.userLogs, required this.branches})
       : super(key: key);
 
   @override
@@ -25,8 +27,7 @@ class _RareAchievementsState extends State<RareAchievements> {
   void initState() {
     final Calculator calculator = Calculator();
     _achievements =
-        calculator.getCourseAchievements(widget.bestMark, widget.course, widget.userLogs);
-    print(_achievements);
+        calculator.getCourseAchievements(widget.bestMark, widget.course, widget.userLogs, widget.branches);
     super.initState();
   }
 

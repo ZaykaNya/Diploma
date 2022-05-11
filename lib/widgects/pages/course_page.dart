@@ -1,5 +1,6 @@
 import 'dart:ui';
 
+import 'package:diplom/api/courses.dart';
 import 'package:diplom/blocs/courseTests/course_tests_bloc.dart';
 import 'package:diplom/blocs/courseTests/course_tests_state.dart';
 import 'package:diplom/blocs/user/user_bloc.dart';
@@ -34,6 +35,15 @@ class CoursePage extends StatefulWidget {
 }
 
 class _CoursePageState extends State<CoursePage> with TickerProviderStateMixin {
+  List<String> _branches = [];
+
+  @override
+  void initState() {
+    fetchCoursesByName(widget.course).then((value) {
+      _branches = value.branches;
+    });
+    super.initState();
+  }
 
   launchURL(String url) async {
     if(await canLaunch(url)) {
@@ -160,7 +170,8 @@ class _CoursePageState extends State<CoursePage> with TickerProviderStateMixin {
                               return RareAchievements(
                                   course: widget.course,
                                   bestMark: userBestMarkState.userBestMark,
-                                  userLogs: userLogsState.userLogs
+                                  userLogs: userLogsState.userLogs,
+                                  branches: _branches,
                               );
                             } else {
                               return Container();
