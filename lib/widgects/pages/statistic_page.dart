@@ -220,10 +220,10 @@ class _StatisticPageState extends State<StatisticPage> {
           // selectedItemColor: Colors.white,
           unselectedItemColor: const Color.fromRGBO(134, 137, 235, 1),
           onTap: (index) {
-            DateTime now = DateTime.now();
+            DateTime weekAgo = DateTime.now().subtract(const Duration(days: 6));
             logsBloc.add(GetLogsFromTime(
                 id: widget.userId,
-                time: '${now.year}-${now.month}-${now.day}'));
+                time: '${weekAgo.year}-${weekAgo.month}-${weekAgo.day}'));
             userLogsBloc.add(GetUserLogs(id: widget.userId));
             _onItemTapped(index);
             if (index == 0) {

@@ -17,7 +17,7 @@ class AverageDashboard extends StatefulWidget {
 }
 
 class _AverageDashboardState extends State<AverageDashboard> {
-  double _dailyProgress = 0;
+  double _weeklyProgress = 0;
   int _completedCourses = 0;
   int _inProgressCourses = 0;
   String _message = "Lets learn something new today";
@@ -27,10 +27,10 @@ class _AverageDashboardState extends State<AverageDashboard> {
     final Calculator calculator = Calculator();
     List coursesProgress = calculator.countCompletedCourses(widget.courses, widget.userLogs);
     setState(() {
-      _dailyProgress = calculator.countDailyProgress(widget.logs);
+      _weeklyProgress = calculator.countWeeklyProgress(widget.logs);
       _completedCourses = coursesProgress[0];
       _inProgressCourses = coursesProgress[1];
-      _message = calculator.getDailyProgressMessage(_dailyProgress);
+      _message = calculator.getDailyProgressMessage(_weeklyProgress);
     });
     super.initState();
   }
@@ -66,7 +66,7 @@ class _AverageDashboardState extends State<AverageDashboard> {
                     showTicks: false,
                     annotations: [
                       GaugeAnnotation(
-                          widget: Text('$_dailyProgress %',
+                          widget: Text('$_weeklyProgress %',
                               style: const TextStyle(
                                   fontSize: 38,
                                   fontWeight: FontWeight.w700,
@@ -80,7 +80,7 @@ class _AverageDashboardState extends State<AverageDashboard> {
                         thickness: 30),
                     pointers: [
                       RangePointer(
-                          value: _dailyProgress,
+                          value: _weeklyProgress,
                           cornerStyle: CornerStyle.bothCurve,
                           width: 30,
                           sizeUnit: GaugeSizeUnit.logicalPixel,

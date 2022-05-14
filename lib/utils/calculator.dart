@@ -51,7 +51,7 @@ class Calculator {
   }
 
   /// Counts daily activity (45 minutes = 100%)
-  double countDailyProgress(logs) {
+  double countWeeklyProgress(logs) {
     double progress = 0;
 
     for (UserLog userLog in logs) {
@@ -170,7 +170,7 @@ class Calculator {
   /// check which global achievements are completed
   List getGlobalAchievements(courses, userLogs, userTests) {
     List achievements = [];
-    List closestAchievements = [];
+    List uncompletedAchievements = [];
     String bestMark = '0';
 
     if (courses.length > 0) {
@@ -178,14 +178,14 @@ class Calculator {
         'id': 0,
         'header': 'Newcomer',
         'label': 'You’ve enrolled your first course. Keep it up!',
-        'closest': false,
+        'uncompleted': false,
       });
     } else {
-      closestAchievements.add({
+      uncompletedAchievements.add({
         'id': 0,
         'header': 'Newcomer',
         'label': 'You’ve enrolled your first course. Keep it up!',
-        'closest': false,
+        'uncompleted': true,
       });
     }
 
@@ -194,14 +194,14 @@ class Calculator {
         'id': 1,
         'header': 'First win',
         'label': 'You’ve completed your first course. Well done!',
-        'closest': false,
+        'uncompleted': false,
       });
     } else {
-      closestAchievements.add({
+      uncompletedAchievements.add({
         'id': 1,
         'header': 'First win',
         'label': 'You’ve completed your first course. Well done!',
-        'closest': false,
+        'uncompleted': true,
       });
     }
 
@@ -210,14 +210,14 @@ class Calculator {
         'id': 2,
         'header': 'Smarter?',
         'label': 'You’ve taken your first test.',
-        'closest': false,
+        'uncompleted': false,
       });
     } else {
-      closestAchievements.add({
+      uncompletedAchievements.add({
         'id': 2,
         'header': 'Smarter?',
         'label': 'You’ve taken your first test.',
-        'closest': false,
+        'uncompleted': true,
       });
     }
 
@@ -232,24 +232,18 @@ class Calculator {
         'id': 3,
         'header': 'Boss of the test',
         'label': 'You’ve got 100% in test.',
-        'closest': false,
+        'uncompleted': false,
       });
     } else {
-      closestAchievements.add({
+      uncompletedAchievements.add({
         'id': 3,
         'header': 'Boss of the test',
         'label': 'You’ve got 100% in test.',
-        'closest': false,
+        'uncompleted': true,
       });
     }
 
-    dynamic closestAchievement = getClosestGlobalAchievement(closestAchievements, courses, userLogs, userTests);
-
-    if(closestAchievement['header'] != null) {
-      achievements.add(closestAchievement);
-    }
-
-    return achievements;
+    return [achievements, uncompletedAchievements];
   }
 
   /// check which course achievements are completed

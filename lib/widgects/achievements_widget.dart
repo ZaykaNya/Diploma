@@ -21,12 +21,15 @@ class Achievements extends StatefulWidget {
 
 class _AchievementsState extends State<Achievements> {
   List _achievements = [];
+  List _uncompletedAchievements = [];
 
   @override
   void initState() {
     final Calculator calculator = Calculator();
-    _achievements =
+    List listOfAchievements =
         calculator.getGlobalAchievements(widget.courses, widget.userLogs, widget.userTests);
+    _achievements = listOfAchievements[0];
+    _uncompletedAchievements = listOfAchievements[1];
     super.initState();
   }
 
@@ -70,9 +73,30 @@ class _AchievementsState extends State<Achievements> {
                     Achievement(
                       header: achievement['header'],
                       label: achievement['label'],
-                      closest: achievement['closest'],
+                      uncompleted: achievement['uncompleted'],
                     )
-                  ]
+                  ],
+                  if (_uncompletedAchievements.isNotEmpty) ...{
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        const Padding(
+                            padding: EdgeInsets.fromLTRB(0, 24, 0, 16),
+                            child: Text("Uncompleted achievements",
+                                style: TextStyle(
+                                    fontSize: 24,
+                                    fontWeight: FontWeight.w700,
+                                    color: Color.fromRGBO(93, 92, 99, 1)))),
+                        for(var achievement in _uncompletedAchievements) ...[
+                          Achievement(
+                            header: achievement['header'],
+                            label: achievement['label'],
+                            uncompleted: achievement['uncompleted'],
+                          )
+                        ]
+                      ],
+                    )
+                  },
                 ],
               ),
             )

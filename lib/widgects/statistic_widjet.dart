@@ -1,11 +1,16 @@
 import 'dart:ui';
 
+import 'package:diplom/blocs/userTests/user_tests_bloc.dart';
+import 'package:diplom/blocs/userTests/user_tests_state.dart';
 import 'package:diplom/models/chart_data.dart';
 import 'package:diplom/models/log.dart';
 import 'package:diplom/models/mark.dart';
 import 'package:diplom/models/test.dart';
 import 'package:diplom/utils/calculator.dart';
+import 'package:diplom/widgects/pages/tests_details_page.dart';
+import 'package:diplom/widgects/pages/time_details_page.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
 import 'package:syncfusion_flutter_gauges/gauges.dart';
 
@@ -101,8 +106,7 @@ class _StatisticWidgetState extends State<StatisticWidget> {
             child: SfCartesianChart(
                 primaryXAxis: CategoryAxis(),
                 series: <CartesianSeries>[
-                  SplineSeries<ChartData, String>(
-                    width: 3,
+                  ColumnSeries<ChartData, String>(
                     color: const Color.fromRGBO(56, 179, 158, 1),
                     dataSource: _timeChartData,
                     xValueMapper: (ChartData data, _) => data.x,
@@ -110,12 +114,41 @@ class _StatisticWidgetState extends State<StatisticWidget> {
                   )
                 ])),
         Padding(
-            padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
+            padding: const EdgeInsets.fromLTRB(16, 0, 16, 0),
             child: Text("Total time spent: ${widget.timeSpent} h.",
                 style: const TextStyle(
                     fontSize: 16,
                     fontWeight: FontWeight.w700,
                     color: Color.fromRGBO(93, 92, 99, 1)))),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            OutlinedButton(
+              style: OutlinedButton.styleFrom(
+                padding: const EdgeInsets.all(0),
+                primary: Colors.white,
+                shadowColor: Colors.white,
+                side: const BorderSide(color: Colors.white, width: 0),
+              ),
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => const TimeDetailsPage()
+                  ),
+                );
+              },
+              child: const Text(
+                  'Click for details',
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.w600,
+                      color: Color.fromRGBO(93, 92, 99, 1))
+              ),
+            ),
+          ],
+        ),
         const Padding(
             padding: EdgeInsets.fromLTRB(16, 24, 16, 16),
             child: Text("Test results",
@@ -142,6 +175,45 @@ class _StatisticWidgetState extends State<StatisticWidget> {
                       xValueMapper: (ChartData data, _) => data.x,
                       yValueMapper: (ChartData data, _) => data.y)
                 ])),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            OutlinedButton(
+              style: OutlinedButton.styleFrom(
+                padding: const EdgeInsets.all(0),
+                primary: Colors.white,
+                shadowColor: Colors.white,
+                side: const BorderSide(color: Colors.white, width: 0),
+              ),
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => BlocBuilder<UserTestsBloc, UserTestsState>(
+                          builder: (context, testsState) {
+                            if (testsState is UserTestsLoaded) {
+                              return TestsDetailsPage(
+                                courseTests: testsState.userTests,
+                                course: widget.course,
+                              );
+                            } else {
+                              return Container();
+                            }
+                          })
+                  ),
+                );
+              },
+              child: const Text(
+                  'Click for details',
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.w600,
+                      color: Color.fromRGBO(93, 92, 99, 1))
+              ),
+            ),
+          ],
+        ),
       ],
     );
   }

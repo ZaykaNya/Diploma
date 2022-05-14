@@ -5,6 +5,7 @@ class Test {
   final String? courseId;
   final String? testType;
   final String? timeStart;
+  final String? timeEnd;
   final String? correctCount;
   final String? wrongCount;
   final String? percentage;
@@ -16,6 +17,7 @@ class Test {
     required this.courseId,
     required this.testType,
     required this.timeStart,
+    required this.timeEnd,
     required this.correctCount,
     required this.wrongCount,
     required this.percentage,
@@ -27,8 +29,9 @@ class Test {
       userId: json['user_id'],
       branchId: json['branch_id'],
       courseId: json['course_id'],
-      testType: json['time_start'],
-      timeStart: json['time_end'],
+      testType: json['test_type'],
+      timeStart: json['time_start'],
+      timeEnd: json['time_end'],
       correctCount: json['correct_count'],
       wrongCount: json['wrong_count'],
       percentage: json['percentage'],

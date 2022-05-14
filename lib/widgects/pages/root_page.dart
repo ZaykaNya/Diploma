@@ -36,9 +36,9 @@ class _HomePageState extends State<HomePage> {
         final userId = context.select(
               (AuthenticationBloc bloc) => bloc.state.user.id,
         );
-        DateTime now = DateTime.now();
+        DateTime weekAgo = DateTime.now().subtract(const Duration(days: 6));
         userBloc.add(GetUser(id: userId));
-        logsBloc.add(GetLogsFromTime(id: userId, time: '${now.year}-${now.month}-${now.day}'));
+        logsBloc.add(GetLogsFromTime(id: userId, time: '${weekAgo.year}-${weekAgo.month}-${weekAgo.day}'));
         userLogsBloc.add(GetUserLogs(id: userId));
         userTestsBloc.add(GetUserTests(id: userId));
         return StatisticPage(userId: userId);
