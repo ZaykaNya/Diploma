@@ -43,6 +43,7 @@ class CourseWidget extends StatefulWidget {
 class _CourseWidgetState extends State<CourseWidget> {
   int _progress = 0;
   double _time = 0;
+  List<String> _branches = [];
 
   @override
   void initState() {
@@ -51,6 +52,7 @@ class _CourseWidgetState extends State<CourseWidget> {
       setState(() {
         _progress = calculator.countProgress(widget.userLogs, widget.course, value.branches);
         _time = calculator.countTime(widget.userLogs, widget.course);
+        _branches = value.branches;
       });
     });
     super.initState();
@@ -176,7 +178,8 @@ class _CourseWidgetState extends State<CourseWidget> {
               builder: (context) => CoursePage(
                   course: widget.course.capitalize(),
                   courseProgress: _progress,
-                  timeSpent: _time)),
+                  timeSpent: _time,
+                  branches: _branches,)),
         );
       },
     );

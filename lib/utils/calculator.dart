@@ -50,6 +50,66 @@ class Calculator {
     return double.parse(time.toStringAsPrecision(1));
   }
 
+  /// Counts time spent on course
+  List<List<ChartData>> countTimeForLast7Days(userLogs, course, branches) {
+    List<List<ChartData>> weekTime = [];
+
+    for(int i = 0; i < 7; i++) {
+      DateTime date = DateTime.now().subtract(Duration(days: 6 - i));
+      String dateFormat = DateFormat('yyyy-MM-dd').format(date);
+      List<ChartData> dayTime = <ChartData>[];
+      int index = 0;
+
+      for(var branch in branches) {
+        double branchTime = 0;
+
+        for(UserLog userLog in userLogs) {
+          if(userLog.contentId!.contains(branch) && userLog.time!.contains(dateFormat)) {
+            branchTime += double.parse(userLog.seconds.toString());
+          }
+        }
+
+        branchTime /= 60;
+        index++;
+
+        dayTime.add(ChartData(
+            index.toString(),
+            branchTime
+        ));
+      }
+
+      weekTime.add(dayTime);
+    }
+
+    return weekTime;
+  }
+
+  /// Counts time spent on course branches
+  List<ChartData> countTimeByBranches(List<UserLog> userLogs, course, branches) {
+    List<ChartData> time = <ChartData>[];
+    int index = 0;
+
+    for(var branch in branches) {
+      double branchTime = 0;
+
+      for(UserLog userLog in userLogs) {
+        if(userLog.contentId!.contains(branch)) {
+          branchTime += double.parse(userLog.seconds.toString());
+        }
+      }
+
+      branchTime /= 60;
+      index++;
+
+      time.add(ChartData(
+        index.toString(),
+        branchTime
+      ));
+    }
+
+    return time;
+  }
+
   /// Counts daily activity (45 minutes = 100%)
   double countWeeklyProgress(logs) {
     double progress = 0;

@@ -22,12 +22,15 @@ class CoursePage extends StatefulWidget {
   final String course;
   final double timeSpent;
   final int courseProgress;
+  final List<String> branches;
 
   const CoursePage(
       {Key? key,
       required this.course,
       required this.courseProgress,
-      required this.timeSpent})
+      required this.timeSpent,
+      required this.branches,
+      })
       : super(key: key);
 
   @override
@@ -169,6 +172,7 @@ class _CoursePageState extends State<CoursePage> with TickerProviderStateMixin {
                                             timeSpent: widget.timeSpent,
                                             bestMark: userBestMarkState.userBestMark,
                                             courseTests: courseTestsState.courseTests,
+                                            branches: widget.branches,
                                           );
                                         } else {
                                           return Container();

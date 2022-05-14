@@ -1,5 +1,7 @@
 import 'dart:ui';
 
+import 'package:diplom/blocs/userLogs/user_logs_bloc.dart';
+import 'package:diplom/blocs/userLogs/user_logs_state.dart';
 import 'package:diplom/blocs/userTests/user_tests_bloc.dart';
 import 'package:diplom/blocs/userTests/user_tests_state.dart';
 import 'package:diplom/models/chart_data.dart';
@@ -21,16 +23,18 @@ class StatisticWidget extends StatefulWidget {
   final Mark bestMark;
   final List<Test> courseTests;
   final List<UserLog> userWeekLogs;
+  final List<String> branches;
 
-  const StatisticWidget(
-      {Key? key,
-      required this.courseProgress,
-      required this.userWeekLogs,
-      required this.course,
-      required this.bestMark,
-      required this.courseTests,
-      required this.timeSpent})
-      : super(key: key);
+  const StatisticWidget({
+    Key? key,
+    required this.courseProgress,
+    required this.userWeekLogs,
+    required this.course,
+    required this.bestMark,
+    required this.courseTests,
+    required this.timeSpent,
+    required this.branches,
+  }) : super(key: key);
 
   @override
   State<StatisticWidget> createState() => _StatisticWidgetState();
@@ -134,18 +138,28 @@ class _StatisticWidgetState extends State<StatisticWidget> {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                      builder: (context) => const TimeDetailsPage()
+                    builder: (context) =>
+                        BlocBuilder<UserLogsBloc, UserLogsState>(
+                            builder: (context, userState) {
+                            if (userState is UserLogsLoaded) {
+                              return TimeDetailsPage(
+                                branches: widget.branches,
+                                userWeekLogs: widget.userWeekLogs,
+                                userLogs: userState.userLogs,
+                                course: widget.course);
+                            } else {
+                              return Container();
+                            }
+                    }),
                   ),
                 );
               },
-              child: const Text(
-                  'Click for details',
+              child: const Text('Click for details',
                   textAlign: TextAlign.center,
                   style: TextStyle(
                       fontSize: 16,
                       fontWeight: FontWeight.w600,
-                      color: Color.fromRGBO(93, 92, 99, 1))
-              ),
+                      color: Color.fromRGBO(93, 92, 99, 1))),
             ),
           ],
         ),
@@ -189,8 +203,9 @@ class _StatisticWidgetState extends State<StatisticWidget> {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                      builder: (context) => BlocBuilder<UserTestsBloc, UserTestsState>(
-                          builder: (context, testsState) {
+                      builder: (context) =>
+                          BlocBuilder<UserTestsBloc, UserTestsState>(
+                              builder: (context, testsState) {
                             if (testsState is UserTestsLoaded) {
                               return TestsDetailsPage(
                                 courseTests: testsState.userTests,
@@ -199,18 +214,15 @@ class _StatisticWidgetState extends State<StatisticWidget> {
                             } else {
                               return Container();
                             }
-                          })
-                  ),
+                          })),
                 );
               },
-              child: const Text(
-                  'Click for details',
+              child: const Text('Click for details',
                   textAlign: TextAlign.center,
                   style: TextStyle(
                       fontSize: 16,
                       fontWeight: FontWeight.w600,
-                      color: Color.fromRGBO(93, 92, 99, 1))
-              ),
+                      color: Color.fromRGBO(93, 92, 99, 1))),
             ),
           ],
         ),
