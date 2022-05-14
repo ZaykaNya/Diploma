@@ -20,7 +20,7 @@ class Achievements extends StatefulWidget {
 }
 
 class _AchievementsState extends State<Achievements> {
-  List<int> _achievements = [];
+  List _achievements = [];
 
   @override
   void initState() {
@@ -66,30 +66,13 @@ class _AchievementsState extends State<Achievements> {
                       ),
                     ),
                   },
-                  if (_achievements.contains(1)) ...{
-                    const Achievement(
-                      header: 'Newcomer',
-                      label: 'You’ve enrolled your first course. Keep it up!',
-                    ),
-                  },
-                  if (_achievements.contains(2)) ...{
-                    const Achievement(
-                      header: 'First win',
-                      label: 'You’ve completed your first course. Well done!',
-                    ),
-                  },
-                  if (_achievements.contains(3)) ...{
-                    const Achievement(
-                      header: 'Smarter?',
-                      label: 'You’ve taken your first test.',
-                    ),
-                  },
-                  if (_achievements.contains(4)) ...{
-                    const Achievement(
-                      header: 'Boss of the test',
-                      label: 'You’ve got 100% in test.',
-                    ),
-                  },
+                  for(var achievement in _achievements) ...[
+                    Achievement(
+                      header: achievement['header'],
+                      label: achievement['label'],
+                      closest: achievement['closest'],
+                    )
+                  ]
                 ],
               ),
             )

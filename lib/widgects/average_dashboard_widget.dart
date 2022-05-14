@@ -25,7 +25,7 @@ class _AverageDashboardState extends State<AverageDashboard> {
   @override
   void initState() {
     final Calculator calculator = Calculator();
-    List<int> coursesProgress = calculator.countCompletedCourses(widget.courses, widget.userLogs);
+    List coursesProgress = calculator.countCompletedCourses(widget.courses, widget.userLogs);
     setState(() {
       _dailyProgress = calculator.countDailyProgress(widget.logs);
       _completedCourses = coursesProgress[0];

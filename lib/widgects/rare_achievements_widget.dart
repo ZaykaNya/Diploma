@@ -13,7 +13,12 @@ class RareAchievements extends StatefulWidget {
   final List<String> branches;
   final List<UserLog> userLogs;
 
-  const RareAchievements({Key? key, required this.course, required this.bestMark, required this.userLogs, required this.branches})
+  const RareAchievements(
+      {Key? key,
+      required this.course,
+      required this.bestMark,
+      required this.userLogs,
+      required this.branches})
       : super(key: key);
 
   @override
@@ -21,13 +26,16 @@ class RareAchievements extends StatefulWidget {
 }
 
 class _RareAchievementsState extends State<RareAchievements> {
-  List<int> _achievements = [];
+  List _achievements = [];
+  List _uncompletedAchievements = [];
 
   @override
   void initState() {
     final Calculator calculator = Calculator();
-    _achievements =
-        calculator.getCourseAchievements(widget.bestMark, widget.course, widget.userLogs, widget.branches);
+    List listOfAchievements = calculator.getCourseAchievements(
+        widget.bestMark, widget.course, widget.userLogs, widget.branches);
+    _achievements = listOfAchievements[0];
+    _uncompletedAchievements = listOfAchievements[1];
     super.initState();
   }
 
@@ -57,7 +65,7 @@ class _RareAchievementsState extends State<RareAchievements> {
                   if (_achievements.isEmpty) ...{
                     const Center(
                       child: Padding(
-                        padding: EdgeInsets.fromLTRB(0, 32, 0, 16),
+                        padding: EdgeInsets.fromLTRB(0, 24, 0, 16),
                         child: Text('You don`t have achievements yet',
                             textAlign: TextAlign.center,
                             style: TextStyle(
@@ -67,26 +75,35 @@ class _RareAchievementsState extends State<RareAchievements> {
                       ),
                     ),
                   },
-                  if (_achievements.contains(1)) ...{
+                  for (var achievement in _achievements) ...[
                     RareAchievement(
-                      header: 'Getting started',
-                      course: widget.course,
-                      label: 'You have started the course',
-                    ),
-                  },
-                  if (_achievements.contains(2)) ...{
-                    RareAchievement(
-                      header: 'Great knowledge',
-                      course: widget.course,
-                      label: 'You`re best mark > 80%',
-                    ),
-                  },
-                  if (_achievements.contains(3)) ...{
-                    RareAchievement(
-                      header: '${widget.course} master',
-                      course: widget.course,
-                      label: 'You have completed the course',
-                    ),
+                      header: achievement['header'],
+                      course: achievement['course'],
+                      label: achievement['label'],
+                      closest: achievement['closest'],
+                    )
+                  ],
+                  if (_uncompletedAchievements.isNotEmpty) ...{
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        const Padding(
+                            padding: EdgeInsets.fromLTRB(0, 24, 0, 16),
+                            child: Text("Uncompleted achievements",
+                                style: TextStyle(
+                                    fontSize: 24,
+                                    fontWeight: FontWeight.w700,
+                                    color: Color.fromRGBO(93, 92, 99, 1)))),
+                        for (var achievement in _uncompletedAchievements) ...[
+                          RareAchievement(
+                            header: achievement['header'],
+                            course: achievement['course'],
+                            label: achievement['label'],
+                            closest: achievement['closest'],
+                          )
+                        ]
+                      ],
+                    )
                   },
                 ],
               ),

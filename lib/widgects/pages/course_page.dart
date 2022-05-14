@@ -119,8 +119,8 @@ class _CoursePageState extends State<CoursePage> with TickerProviderStateMixin {
             ),
             controller: _tabController,
             tabs: const [
+              Tab(text: 'ACHIEVEMENTS', height: 32),
               Tab(text: 'STATISTIC', height: 32),
-              Tab(text: 'ACHIEVEMENTS', height: 32)
             ],
           ),
           Container(
@@ -129,37 +129,6 @@ class _CoursePageState extends State<CoursePage> with TickerProviderStateMixin {
             child: TabBarView(
               controller: _tabController,
               children: [
-                SingleChildScrollView(
-                  child: BlocBuilder<WeekLogsBloc, WeekLogsState>(
-                      builder: (context, weekLogsState) {
-                    if (weekLogsState is WeekLogsLoaded) {
-                      return BlocBuilder<UserBestMarkBloc, UserBestMarkState>(
-                          builder: (context, userBestMarkState) {
-                        if (userBestMarkState is UserBestMarkLoaded) {
-                          return BlocBuilder<CourseTestsBloc, CourseTestsState>(
-                              builder: (context, courseTestsState) {
-                            if (courseTestsState is CourseTestsLoaded) {
-                              return StatisticWidget(
-                                courseProgress: widget.courseProgress,
-                                userWeekLogs: weekLogsState.userWeekLogs,
-                                course: widget.course,
-                                timeSpent: widget.timeSpent,
-                                bestMark: userBestMarkState.userBestMark,
-                                courseTests: courseTestsState.courseTests,
-                              );
-                            } else {
-                              return Container();
-                            }
-                          });
-                        } else {
-                          return Container();
-                        }
-                      });
-                    } else {
-                      return Container();
-                    }
-                  }),
-                ),
                 SingleChildScrollView(
                   child: BlocBuilder<UserBestMarkBloc, UserBestMarkState>(
                       builder: (context, userBestMarkState) {
@@ -182,6 +151,37 @@ class _CoursePageState extends State<CoursePage> with TickerProviderStateMixin {
                       return Container();
                     }
                   }),
+                ),
+                SingleChildScrollView(
+                  child: BlocBuilder<WeekLogsBloc, WeekLogsState>(
+                      builder: (context, weekLogsState) {
+                        if (weekLogsState is WeekLogsLoaded) {
+                          return BlocBuilder<UserBestMarkBloc, UserBestMarkState>(
+                              builder: (context, userBestMarkState) {
+                                if (userBestMarkState is UserBestMarkLoaded) {
+                                  return BlocBuilder<CourseTestsBloc, CourseTestsState>(
+                                      builder: (context, courseTestsState) {
+                                        if (courseTestsState is CourseTestsLoaded) {
+                                          return StatisticWidget(
+                                            courseProgress: widget.courseProgress,
+                                            userWeekLogs: weekLogsState.userWeekLogs,
+                                            course: widget.course,
+                                            timeSpent: widget.timeSpent,
+                                            bestMark: userBestMarkState.userBestMark,
+                                            courseTests: courseTestsState.courseTests,
+                                          );
+                                        } else {
+                                          return Container();
+                                        }
+                                      });
+                                } else {
+                                  return Container();
+                                }
+                              });
+                        } else {
+                          return Container();
+                        }
+                      }),
                 ),
               ],
             ),

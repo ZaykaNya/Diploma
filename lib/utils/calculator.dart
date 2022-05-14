@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:diplom/models/chart_data.dart';
 import 'package:diplom/models/log.dart';
 import 'package:diplom/models/mark.dart';
@@ -80,11 +82,12 @@ class Calculator {
   }
 
   /// Counts number of completed and inProgress courses
-  List<int> countCompletedCourses(courses, userLogs) {
+  List countCompletedCourses(courses, userLogs) {
     int completedCourses = 0;
     int inProgressCourses = 0;
     int progress = 0;
     int time = 0;
+    List<int> coursesProgress = [];
 
     for (var course in courses) {
       for (UserLog userLog in userLogs) {
@@ -101,27 +104,121 @@ class Calculator {
         inProgressCourses += 1;
       }
 
+      coursesProgress.add(progress);
+
       time = 0;
     }
 
-    return [completedCourses, inProgressCourses];
+    return [completedCourses, inProgressCourses, coursesProgress];
+  }
+
+  /// Calculates closest global achievement
+  dynamic getClosestGlobalAchievement(achievements, courses, userLogs, userTests) {
+    dynamic closest = {
+      'id': achievements[0]['id'],
+      'header': achievements[0]['header'],
+      'label': achievements[0]['label'],
+      'closest': true,
+    };
+    int progress = 0;
+
+    for(var achievement in achievements) {
+      if(achievement['id'] == 0) {
+        return closest;
+      }
+
+      if(achievement['id'] == 1) {
+        List<int> coursesProgress = countCompletedCourses(courses, userLogs)[2].cast<int>();
+        if(progress < coursesProgress.reduce(max)) {
+          progress = coursesProgress.reduce(max);
+          closest = {
+            'id': achievement['id'],
+            'header': achievement['header'],
+            'label': achievement['label'],
+            'closest': true,
+          };
+        }
+      }
+
+      if(achievement['id'] == 2) {
+        return {
+          'id': achievement['id'],
+          'header': achievement['header'],
+          'label': achievement['label'],
+          'closest': true,
+        };
+      }
+
+      if(achievement['id'] == 3) {
+        for(var userTest in userTests) {
+          if(int.parse(userTest.percentage) > progress) {
+            progress = int.parse(userTest.percentage);
+            closest = {
+              'id': achievement['id'],
+              'header': achievement['header'],
+              'label': achievement['label'],
+              'closest': true,
+            };
+          }
+        }
+      }
+    }
+
+    return closest;
   }
 
   /// check which global achievements are completed
-  List<int> getGlobalAchievements(courses, userLogs, userTests) {
-    List<int> achievements = [];
+  List getGlobalAchievements(courses, userLogs, userTests) {
+    List achievements = [];
+    List closestAchievements = [];
     String bestMark = '0';
 
     if (courses.length > 0) {
-      achievements.add(1);
+      achievements.add({
+        'id': 0,
+        'header': 'Newcomer',
+        'label': 'You’ve enrolled your first course. Keep it up!',
+        'closest': false,
+      });
+    } else {
+      closestAchievements.add({
+        'id': 0,
+        'header': 'Newcomer',
+        'label': 'You’ve enrolled your first course. Keep it up!',
+        'closest': false,
+      });
     }
 
     if (countCompletedCourses(courses, userLogs)[0] > 0) {
-      achievements.add(2);
+      achievements.add({
+        'id': 1,
+        'header': 'First win',
+        'label': 'You’ve completed your first course. Well done!',
+        'closest': false,
+      });
+    } else {
+      closestAchievements.add({
+        'id': 1,
+        'header': 'First win',
+        'label': 'You’ve completed your first course. Well done!',
+        'closest': false,
+      });
     }
 
     if (userTests.length > 0) {
-      achievements.add(3);
+      achievements.add({
+        'id': 2,
+        'header': 'Smarter?',
+        'label': 'You’ve taken your first test.',
+        'closest': false,
+      });
+    } else {
+      closestAchievements.add({
+        'id': 2,
+        'header': 'Smarter?',
+        'label': 'You’ve taken your first test.',
+        'closest': false,
+      });
     }
 
     for (var userTest in userTests) {
@@ -131,31 +228,93 @@ class Calculator {
     }
 
     if (bestMark == '100') {
-      achievements.add(4);
+      achievements.add({
+        'id': 3,
+        'header': 'Boss of the test',
+        'label': 'You’ve got 100% in test.',
+        'closest': false,
+      });
+    } else {
+      closestAchievements.add({
+        'id': 3,
+        'header': 'Boss of the test',
+        'label': 'You’ve got 100% in test.',
+        'closest': false,
+      });
+    }
+
+    dynamic closestAchievement = getClosestGlobalAchievement(closestAchievements, courses, userLogs, userTests);
+
+    if(closestAchievement['header'] != null) {
+      achievements.add(closestAchievement);
     }
 
     return achievements;
   }
 
   /// check which course achievements are completed
-  List<int> getCourseAchievements(Mark bestMark, course, userLogs, branches) {
-    List<int> achievements = [];
+  List getCourseAchievements(Mark bestMark, course, userLogs, branches) {
+    List achievements = [];
+    List uncompletedAchievements = [];
 
     if(countTime(userLogs, course.toLowerCase()) > 0) {
-      achievements.add(1);
+      achievements.add({
+        'header': 'Getting started',
+        'course': course,
+        'label': 'You have started the course',
+        'closest': false,
+      });
+    } else {
+      uncompletedAchievements.add({
+        'header': 'Getting started',
+        'course': course,
+        'label': 'You have started the course',
+        'closest': true,
+      });
     }
 
     if(bestMark.mark != null) {
       if(int.parse(bestMark.mark!) > 80) {
-        achievements.add(2);
+        achievements.add({
+          'header': 'Great knowledge',
+          'course': course,
+          'label': 'You`re best mark > 80%',
+          'closest': false,
+        });
+      } else {
+        uncompletedAchievements.add({
+          'header': 'Great knowledge',
+          'course': course,
+          'label': 'You`re best mark > 80%',
+          'closest': true,
+        });
       }
+    } else {
+      uncompletedAchievements.add({
+        'header': 'Great knowledge',
+        'course': course,
+        'label': 'You`re best mark > 80%',
+        'closest': true,
+      });
     }
 
     if(countProgress(userLogs, course, branches) >= 100) {
-      achievements.add(3);
+      achievements.add({
+        'header': '$course master',
+        'course': course,
+        'label': 'You have completed the course',
+        'closest': false,
+      });
+    } else {
+      uncompletedAchievements.add({
+        'header': '$course master',
+        'course': course,
+        'label': 'You have completed the course',
+        'closest': true,
+      });
     }
 
-    return achievements;
+    return [achievements, uncompletedAchievements];
   }
 
   /// calculates time spent every day on course through last 7 days
