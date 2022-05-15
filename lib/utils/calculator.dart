@@ -568,8 +568,6 @@ class Calculator {
     double difference = userTimeTestAverage - timeTestAverage;
     String word = "more";
 
-    print(difference);
-
     if(difference < 0) {
       difference *= -1;
       word = "less";
