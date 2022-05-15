@@ -28,7 +28,9 @@ class History extends StatefulWidget {
   State<History> createState() => _HistoryState();
 }
 
-class _HistoryState extends State<History> {
+class _HistoryState extends State<History> with TickerProviderStateMixin {
+  bool _pageLoaded = false;
+  late AnimationController controller;
   List<ChartDataCompare> _chartTimeDataCompare = <ChartDataCompare>[];
   List<ChartDataCompare> _chartTestsResultsDataCompare = <ChartDataCompare>[];
   List<ChartDataCompare> _chartTestsDurationDataCompare = <ChartDataCompare>[];
@@ -42,8 +44,21 @@ class _HistoryState extends State<History> {
 
   @override
   void initState() {
+    controller = AnimationController(
+      vsync: this,
+      duration: const Duration(seconds: 1),
+    )..addListener(() {
+      setState(() {});
+    });
+    controller.repeat(reverse: true);
     initPlatformState(widget.courses);
     super.initState();
+  }
+
+  @override
+  void dispose() {
+    controller.dispose();
+    super.dispose();
   }
 
   void initPlatformState(courses) async {
@@ -76,224 +91,265 @@ class _HistoryState extends State<History> {
       _chartTestsDurationDataCompare = testsDurationChartData[0];
       _testsTime = testsDurationChartData[1];
       _testsTimeWord = testsDurationChartData[2];
+      _pageLoaded = true;
     });
   }
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-        padding: const EdgeInsets.all(0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            const Divider(
-              height: 10,
-              thickness: 10,
-              color: Color.fromRGBO(218, 220, 239, 1),
-            ),
-            const Padding(
-                padding: EdgeInsets.fromLTRB(16, 24, 16, 8),
-                child: Text("Compare to others",
-                    style: TextStyle(
-                        fontSize: 20,
-                        fontWeight: FontWeight.w700,
-                        color: Color.fromRGBO(93, 92, 99, 1)))),
-            Padding(
-              padding: const EdgeInsets.fromLTRB(16, 24, 16, 8),
-              child: RichText(
-                text: TextSpan(
-                  style: const TextStyle(
-                      fontSize: 16, color: Color.fromRGBO(93, 92, 99, 1)),
-                  text: 'Usually you are spending ',
-                  children: <TextSpan>[
-                    TextSpan(
-                        text: _courseTime, style: TextStyle(color: _courseTimeWord == "more" ? Colors.green : Colors.red)),
-                    const TextSpan(text: ' minutes '),
-                    TextSpan(text: _courseTimeWord),
-                    const TextSpan(text: ' on course. You`re test results are '),
-                    TextSpan(text: _testsPercentageWord),
-                    const TextSpan(text: ' by '),
-                    TextSpan(
-                        text: '$_testsPercentage%',
-                        style: TextStyle(color: _testsPercentageWord == "better" ? Colors.green : Colors.red)),
-                    const TextSpan(text: ' than average. You spend '),
-                    TextSpan(
-                        text: _testsTime,
-                        style: TextStyle(color: _testsTimeWord == "less" ? Colors.green : Colors.red)),
-                    const TextSpan(text: ' minutes '),
-                    TextSpan(text: _testsTimeWord),
-                    const TextSpan(text: ' on tests.'),
-                  ],
+    if(!_pageLoaded) {
+      return Container(
+          height: MediaQuery.of(context).size.height / 2,
+          alignment: Alignment.center,
+          margin: const EdgeInsets.only(top: 16),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: <Widget>[
+              CircularProgressIndicator(
+                value: controller.value,
+              ),
+              const Padding(padding: EdgeInsets.only(top: 8)),
+              const Text(
+                'Loading...',
+                style: TextStyle(
+                    fontSize: 20,
+                    fontWeight: FontWeight.w700,
+                    color: Color.fromRGBO(93, 92, 99, 1)),
+              ),
+            ],
+          ),
+      );
+    } else {
+      return Padding(
+          padding: const EdgeInsets.all(0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const Divider(
+                height: 10,
+                thickness: 10,
+                color: Color.fromRGBO(218, 220, 239, 1),
+              ),
+              const Padding(
+                  padding: EdgeInsets.fromLTRB(16, 24, 16, 8),
+                  child: Text("Compare to others",
+                      style: TextStyle(
+                          fontSize: 20,
+                          fontWeight: FontWeight.w700,
+                          color: Color.fromRGBO(93, 92, 99, 1)))),
+              Padding(
+                padding: const EdgeInsets.fromLTRB(16, 24, 16, 8),
+                child: RichText(
+                  text: TextSpan(
+                    style: const TextStyle(
+                        fontSize: 16, color: Color.fromRGBO(93, 92, 99, 1)),
+                    text: 'Usually you are spending ',
+                    children: <TextSpan>[
+                      TextSpan(
+                          text: _courseTime,
+                          style: TextStyle(color: _courseTimeWord == "more"
+                              ? Colors.green
+                              : Colors.red)),
+                      const TextSpan(text: ' minutes '),
+                      TextSpan(text: _courseTimeWord),
+                      const TextSpan(
+                          text: ' on course. You`re test results are '),
+                      TextSpan(text: _testsPercentageWord),
+                      const TextSpan(text: ' by '),
+                      TextSpan(
+                          text: '$_testsPercentage%',
+                          style: TextStyle(
+                              color: _testsPercentageWord == "better" ? Colors
+                                  .green : Colors.red)),
+                      const TextSpan(text: ' than average. You spend '),
+                      TextSpan(
+                          text: _testsTime,
+                          style: TextStyle(color: _testsTimeWord == "less"
+                              ? Colors.green
+                              : Colors.red)),
+                      const TextSpan(text: ' minutes '),
+                      TextSpan(text: _testsTimeWord),
+                      const TextSpan(text: ' on tests.'),
+                    ],
+                  ),
                 ),
               ),
-            ),
-            const Padding(
-                padding: EdgeInsets.fromLTRB(16, 24, 16, 8),
-                child: Text("Time spent on courses",
-                    style: TextStyle(
-                        fontSize: 20,
-                        fontWeight: FontWeight.w700,
-                        color: Color.fromRGBO(93, 92, 99, 1)))),
-            Padding(
-                padding: const EdgeInsets.fromLTRB(16, 0, 16, 0),
-                child: SfCartesianChart(
-                    primaryXAxis: CategoryAxis(),
-                    series: <CartesianSeries>[
-                      BarSeries<ChartDataCompare, String>(
-                          color: Colors.pinkAccent,
-                          dataSource: _chartTimeDataCompare,
-                          xValueMapper: (ChartDataCompare data, _) => data.x,
-                          yValueMapper: (ChartDataCompare data, _) => data.y1),
-                      BarSeries<ChartDataCompare, String>(
-                          color: const Color.fromRGBO(56, 179, 158, 1),
-                          dataSource: _chartTimeDataCompare,
-                          xValueMapper: (ChartDataCompare data, _) => data.x,
-                          yValueMapper: (ChartDataCompare data, _) => data.y2),
-                    ])),
-            Padding(
-                padding: const EdgeInsets.fromLTRB(16, 0, 16, 0),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Row(
-                      children: [
-                        Container(
-                          width: 16,
-                          height: 16,
-                          color: const Color.fromRGBO(56, 179, 158, 1),
-                        ),
-                        const Text('  - you`re time spent on course in hours',
-                            style: TextStyle(
-                                color: Color.fromRGBO(93, 92, 99, 1))),
-                      ],
-                    ),
-                    const Padding(padding: EdgeInsets.only(top: 4)),
-                    Row(
-                      children: [
-                        Container(
-                          width: 16,
-                          height: 16,
-                          color: Colors.pinkAccent,
-                        ),
-                        const Text('  - average time spent on course in hours',
-                            style: TextStyle(
-                                color: Color.fromRGBO(93, 92, 99, 1))),
-                      ],
-                    ),
-                  ],
-                )),
-            const Padding(
-                padding: EdgeInsets.fromLTRB(16, 24, 16, 8),
-                child: Text("You`re and others tests results",
-                    style: TextStyle(
-                        fontSize: 20,
-                        fontWeight: FontWeight.w700,
-                        color: Color.fromRGBO(93, 92, 99, 1)))),
-            Padding(
-                padding: const EdgeInsets.fromLTRB(16, 0, 16, 0),
-                child: SfCartesianChart(
-                    primaryXAxis: CategoryAxis(),
-                    series: <CartesianSeries>[
-                      BarSeries<ChartDataCompare, String>(
-                          color: Colors.pinkAccent,
-                          dataSource: _chartTestsResultsDataCompare,
-                          xValueMapper: (ChartDataCompare data, _) => data.x,
-                          yValueMapper: (ChartDataCompare data, _) => data.y1),
-                      BarSeries<ChartDataCompare, String>(
-                          color: const Color.fromRGBO(56, 179, 158, 1),
-                          dataSource: _chartTestsResultsDataCompare,
-                          xValueMapper: (ChartDataCompare data, _) => data.x,
-                          yValueMapper: (ChartDataCompare data, _) => data.y2),
-                    ])),
-            Padding(
-                padding: const EdgeInsets.fromLTRB(16, 0, 16, 0),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Row(
-                      children: [
-                        Container(
-                          width: 16,
-                          height: 16,
-                          color: const Color.fromRGBO(56, 179, 158, 1),
-                        ),
-                        const Text('  - you`re test result',
-                            style: TextStyle(
-                                color: Color.fromRGBO(93, 92, 99, 1))),
-                      ],
-                    ),
-                    const Padding(padding: EdgeInsets.only(top: 4)),
-                    Row(
-                      children: [
-                        Container(
-                          width: 16,
-                          height: 16,
-                          color: Colors.pinkAccent,
-                        ),
-                        const Text('  - average test result',
-                            style: TextStyle(
-                                color: Color.fromRGBO(93, 92, 99, 1))),
-                      ],
-                    ),
-                  ],
-                )),
-            const Padding(
-                padding: EdgeInsets.fromLTRB(16, 24, 16, 8),
-                child: Text("You`re and others tests duration",
-                    style: TextStyle(
-                        fontSize: 20,
-                        fontWeight: FontWeight.w700,
-                        color: Color.fromRGBO(93, 92, 99, 1)))),
-            Padding(
-                padding: const EdgeInsets.fromLTRB(16, 0, 16, 0),
-                child: SfCartesianChart(
-                    primaryXAxis: CategoryAxis(),
-                    series: <CartesianSeries>[
-                      BarSeries<ChartDataCompare, String>(
-                          color: Colors.pinkAccent,
-                          dataSource: _chartTestsDurationDataCompare,
-                          xValueMapper: (ChartDataCompare data, _) => data.x,
-                          yValueMapper: (ChartDataCompare data, _) => data.y1),
-                      BarSeries<ChartDataCompare, String>(
-                          color: const Color.fromRGBO(56, 179, 158, 1),
-                          dataSource: _chartTestsDurationDataCompare,
-                          xValueMapper: (ChartDataCompare data, _) => data.x,
-                          yValueMapper: (ChartDataCompare data, _) => data.y2),
-                    ])),
-            Padding(
-                padding: const EdgeInsets.fromLTRB(16, 0, 16, 0),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Row(
-                      children: [
-                        Container(
-                          width: 16,
-                          height: 16,
-                          color: const Color.fromRGBO(56, 179, 158, 1),
-                        ),
-                        const Text('  - you`re test duration',
-                            style: TextStyle(
-                                color: Color.fromRGBO(93, 92, 99, 1))),
-                      ],
-                    ),
-                    const Padding(padding: EdgeInsets.only(top: 4)),
-                    Row(
-                      children: [
-                        Container(
-                          width: 16,
-                          height: 16,
-                          color: Colors.pinkAccent,
-                        ),
-                        const Text('  - average test duration',
-                            style: TextStyle(
-                                color: Color.fromRGBO(93, 92, 99, 1))),
-                      ],
-                    ),
-                  ],
-                )),
-            const Padding(padding: EdgeInsets.only(top: 32)),
-          ],
-        ));
+              const Padding(
+                  padding: EdgeInsets.fromLTRB(16, 24, 16, 8),
+                  child: Text("Time spent on courses",
+                      style: TextStyle(
+                          fontSize: 20,
+                          fontWeight: FontWeight.w700,
+                          color: Color.fromRGBO(93, 92, 99, 1)))),
+              Padding(
+                  padding: const EdgeInsets.fromLTRB(16, 0, 16, 0),
+                  child: SfCartesianChart(
+                      primaryXAxis: CategoryAxis(),
+                      series: <CartesianSeries>[
+                        BarSeries<ChartDataCompare, String>(
+                            color: Colors.pinkAccent,
+                            dataSource: _chartTimeDataCompare,
+                            xValueMapper: (ChartDataCompare data, _) => data.x,
+                            yValueMapper: (ChartDataCompare data, _) =>
+                            data.y1),
+                        BarSeries<ChartDataCompare, String>(
+                            color: const Color.fromRGBO(56, 179, 158, 1),
+                            dataSource: _chartTimeDataCompare,
+                            xValueMapper: (ChartDataCompare data, _) => data.x,
+                            yValueMapper: (ChartDataCompare data, _) =>
+                            data.y2),
+                      ])),
+              Padding(
+                  padding: const EdgeInsets.fromLTRB(16, 0, 16, 0),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Row(
+                        children: [
+                          Container(
+                            width: 16,
+                            height: 16,
+                            color: const Color.fromRGBO(56, 179, 158, 1),
+                          ),
+                          const Text('  - you`re time spent on course in hours',
+                              style: TextStyle(
+                                  color: Color.fromRGBO(93, 92, 99, 1))),
+                        ],
+                      ),
+                      const Padding(padding: EdgeInsets.only(top: 4)),
+                      Row(
+                        children: [
+                          Container(
+                            width: 16,
+                            height: 16,
+                            color: Colors.pinkAccent,
+                          ),
+                          const Text(
+                              '  - average time spent on course in hours',
+                              style: TextStyle(
+                                  color: Color.fromRGBO(93, 92, 99, 1))),
+                        ],
+                      ),
+                    ],
+                  )),
+              const Padding(
+                  padding: EdgeInsets.fromLTRB(16, 24, 16, 8),
+                  child: Text("You`re and others tests results",
+                      style: TextStyle(
+                          fontSize: 20,
+                          fontWeight: FontWeight.w700,
+                          color: Color.fromRGBO(93, 92, 99, 1)))),
+              Padding(
+                  padding: const EdgeInsets.fromLTRB(16, 0, 16, 0),
+                  child: SfCartesianChart(
+                      primaryXAxis: CategoryAxis(),
+                      series: <CartesianSeries>[
+                        BarSeries<ChartDataCompare, String>(
+                            color: Colors.pinkAccent,
+                            dataSource: _chartTestsResultsDataCompare,
+                            xValueMapper: (ChartDataCompare data, _) => data.x,
+                            yValueMapper: (ChartDataCompare data, _) =>
+                            data.y1),
+                        BarSeries<ChartDataCompare, String>(
+                            color: const Color.fromRGBO(56, 179, 158, 1),
+                            dataSource: _chartTestsResultsDataCompare,
+                            xValueMapper: (ChartDataCompare data, _) => data.x,
+                            yValueMapper: (ChartDataCompare data, _) =>
+                            data.y2),
+                      ])),
+              Padding(
+                  padding: const EdgeInsets.fromLTRB(16, 0, 16, 0),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Row(
+                        children: [
+                          Container(
+                            width: 16,
+                            height: 16,
+                            color: const Color.fromRGBO(56, 179, 158, 1),
+                          ),
+                          const Text('  - you`re test result',
+                              style: TextStyle(
+                                  color: Color.fromRGBO(93, 92, 99, 1))),
+                        ],
+                      ),
+                      const Padding(padding: EdgeInsets.only(top: 4)),
+                      Row(
+                        children: [
+                          Container(
+                            width: 16,
+                            height: 16,
+                            color: Colors.pinkAccent,
+                          ),
+                          const Text('  - average test result',
+                              style: TextStyle(
+                                  color: Color.fromRGBO(93, 92, 99, 1))),
+                        ],
+                      ),
+                    ],
+                  )),
+              const Padding(
+                  padding: EdgeInsets.fromLTRB(16, 24, 16, 8),
+                  child: Text("You`re and others tests duration",
+                      style: TextStyle(
+                          fontSize: 20,
+                          fontWeight: FontWeight.w700,
+                          color: Color.fromRGBO(93, 92, 99, 1)))),
+              Padding(
+                  padding: const EdgeInsets.fromLTRB(16, 0, 16, 0),
+                  child: SfCartesianChart(
+                      primaryXAxis: CategoryAxis(),
+                      series: <CartesianSeries>[
+                        BarSeries<ChartDataCompare, String>(
+                            color: Colors.pinkAccent,
+                            dataSource: _chartTestsDurationDataCompare,
+                            xValueMapper: (ChartDataCompare data, _) => data.x,
+                            yValueMapper: (ChartDataCompare data, _) =>
+                            data.y1),
+                        BarSeries<ChartDataCompare, String>(
+                            color: const Color.fromRGBO(56, 179, 158, 1),
+                            dataSource: _chartTestsDurationDataCompare,
+                            xValueMapper: (ChartDataCompare data, _) => data.x,
+                            yValueMapper: (ChartDataCompare data, _) =>
+                            data.y2),
+                      ])),
+              Padding(
+                  padding: const EdgeInsets.fromLTRB(16, 0, 16, 0),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Row(
+                        children: [
+                          Container(
+                            width: 16,
+                            height: 16,
+                            color: const Color.fromRGBO(56, 179, 158, 1),
+                          ),
+                          const Text('  - you`re test duration',
+                              style: TextStyle(
+                                  color: Color.fromRGBO(93, 92, 99, 1))),
+                        ],
+                      ),
+                      const Padding(padding: EdgeInsets.only(top: 4)),
+                      Row(
+                        children: [
+                          Container(
+                            width: 16,
+                            height: 16,
+                            color: Colors.pinkAccent,
+                          ),
+                          const Text('  - average test duration',
+                              style: TextStyle(
+                                  color: Color.fromRGBO(93, 92, 99, 1))),
+                        ],
+                      ),
+                    ],
+                  )),
+              const Padding(padding: EdgeInsets.only(top: 32)),
+            ],
+          ));
+    }
   }
 }
