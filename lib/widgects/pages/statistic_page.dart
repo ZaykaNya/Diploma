@@ -246,7 +246,7 @@ class _StatisticPageState extends State<StatisticPage> {
             ),
             BottomNavigationBarItem(
               icon: Icon(Icons.timelapse),
-              label: 'History',
+              label: 'Statistic',
             ),
           ],
           currentIndex: _selectedIndex,
