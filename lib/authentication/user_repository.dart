@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:convert';
 import 'package:diplom/api/courses.dart';
+import 'package:diplom/api/logs.dart';
 import 'package:diplom/api/tests.dart';
 import 'package:diplom/api/users.dart';
 import 'package:diplom/models/auth_user.dart';
@@ -29,6 +30,10 @@ class UserRepository {
 
   Future<User> getUserById(id) async {
     return fetchUserDetailsById(id);
+  }
+
+  Future<List<UserLog>> getAllLogs() async {
+    return fetchAllLogs();
   }
 
   Future<List<UserLog>> getUserLogsById(id) async {

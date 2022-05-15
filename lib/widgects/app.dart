@@ -2,6 +2,7 @@ import 'package:diplom/authentication/authentication_bloc.dart';
 import 'package:diplom/authentication/authentication_repository.dart';
 import 'package:diplom/authentication/authentication_state.dart';
 import 'package:diplom/authentication/user_repository.dart';
+import 'package:diplom/blocs/allLogs/all_logs_bloc.dart';
 import 'package:diplom/blocs/course/course_bloc.dart';
 import 'package:diplom/blocs/courseTests/course_tests_bloc.dart';
 import 'package:diplom/blocs/logs/logs_bloc.dart';
@@ -42,6 +43,9 @@ class App extends StatelessWidget {
           ),
           BlocProvider<UserBloc>(
             create: (_) => UserBloc(),
+          ),
+          BlocProvider<AllLogsBloc>(
+            create: (_) => AllLogsBloc(),
           ),
           BlocProvider<LogsBloc>(
             create: (_) => LogsBloc(),

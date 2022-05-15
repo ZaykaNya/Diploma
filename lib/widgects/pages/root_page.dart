@@ -1,4 +1,6 @@
 import 'package:diplom/authentication/authentication_bloc.dart';
+import 'package:diplom/blocs/allLogs/all_logs_bloc.dart';
+import 'package:diplom/blocs/allLogs/all_logs_event.dart';
 import 'package:diplom/blocs/logs/logs_bloc.dart';
 import 'package:diplom/blocs/logs/logs_event.dart';
 import 'package:diplom/blocs/user/user_bloc.dart';
@@ -28,6 +30,7 @@ class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     final userBloc = BlocProvider.of<UserBloc>(context);
+    final allLogsBloc = BlocProvider.of<AllLogsBloc>(context);
     final logsBloc = BlocProvider.of<LogsBloc>(context);
     final userLogsBloc = BlocProvider.of<UserLogsBloc>(context);
     final userTestsBloc = BlocProvider.of<UserTestsBloc>(context);
@@ -37,6 +40,7 @@ class _HomePageState extends State<HomePage> {
               (AuthenticationBloc bloc) => bloc.state.user.id,
         );
         DateTime weekAgo = DateTime.now().subtract(const Duration(days: 6));
+        allLogsBloc.add(const GetAllLogs());
         userBloc.add(GetUser(id: userId));
         logsBloc.add(GetLogsFromTime(id: userId, time: '${weekAgo.year}-${weekAgo.month}-${weekAgo.day}'));
         userLogsBloc.add(GetUserLogs(id: userId));

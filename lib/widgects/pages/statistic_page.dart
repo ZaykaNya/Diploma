@@ -2,11 +2,12 @@ import 'dart:ui';
 
 import 'package:diplom/authentication/authentication.dart';
 import 'package:diplom/authentication/authentication_bloc.dart';
+import 'package:diplom/blocs/allLogs/all_logs_bloc.dart';
+import 'package:diplom/blocs/allLogs/all_logs_state.dart';
 import 'package:diplom/blocs/logs/logs_bloc.dart';
 import 'package:diplom/blocs/logs/logs_event.dart';
 import 'package:diplom/blocs/logs/logs_state.dart';
 import 'package:diplom/blocs/user/user_bloc.dart';
-import 'package:diplom/blocs/user/user_event.dart';
 import 'package:diplom/blocs/user/user_state.dart';
 import 'package:diplom/blocs/userLogs/user_logs_bloc.dart';
 import 'package:diplom/blocs/userLogs/user_logs_event.dart';
@@ -21,7 +22,6 @@ import 'package:diplom/widgects/achievements_widget.dart';
 import 'package:diplom/widgects/courses_widget.dart';
 import 'package:diplom/widgects/history_widget.dart';
 import 'package:diplom/widgects/average_dashboard_widget.dart';
-import 'package:diplom/widgects/rare_achievements_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -193,7 +193,41 @@ class _StatisticPageState extends State<StatisticPage> {
                     ],
                   );
                 } else if (state.navbarItem == NavbarItem.history) {
-                  return const History();
+                  return BlocBuilder<UserLogsBloc, UserLogsState>(
+                      builder: (context, userLogsState) {
+                        if (userLogsState is UserLogsLoaded) {
+                          return BlocBuilder<AllLogsBloc, AllLogsState>(
+                              builder: (context, allLogsState) {
+                                if (allLogsState is AllLogsLoaded) {
+                                  return BlocBuilder<UserBloc, UserState>(
+                                      builder: (context, userState) {
+                                        if (userState is UserLoaded) {
+                                          return BlocBuilder<UserTestsBloc, UserTestsState>(
+                                              builder: (context, testsState) {
+                                                if (testsState is UserTestsLoaded) {
+                                                  return History(
+                                                    userLogs: userLogsState.userLogs,
+                                                    allLogs: allLogsState.allLogs,
+                                                    courses: userState.user.courses,
+                                                    userTests: testsState.userTests,
+                                                  );
+                                                } else {
+                                                  return Container();
+                                                }
+                                              });
+
+                                        } else {
+                                          return Container();
+                                        }
+                                      });
+                                } else {
+                                  return Container();
+                                }
+                              });
+                        } else {
+                          return Container();
+                        }
+                      });
                 }
                 return Container();
               }),
