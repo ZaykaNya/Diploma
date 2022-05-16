@@ -9,7 +9,7 @@ import 'package:intl/intl.dart';
 
 class Calculator {
   /// Counts progress for course by time spent on branches (2 hours to complete)
-  int countProgress(userLogs, course, branches) {
+  int countProgress(userLogs, course, branches, numberOfBranchesChildren) {
     int progress = 0;
     double time = 0;
 
@@ -308,7 +308,7 @@ class Calculator {
   }
 
   /// check which course achievements are completed
-  List getCourseAchievements(Mark bestMark, course, userLogs, branches) {
+  List getCourseAchievements(Mark bestMark, course, userLogs, branches, numberOfBranchesChildren) {
     List achievements = [];
     List uncompletedAchievements = [];
 
@@ -353,7 +353,7 @@ class Calculator {
       });
     }
 
-    if (countProgress(userLogs, course, branches) >= 100) {
+    if (countProgress(userLogs, course, branches, numberOfBranchesChildren) >= 100) {
       achievements.add({
         'header': '$course master',
         'course': course,

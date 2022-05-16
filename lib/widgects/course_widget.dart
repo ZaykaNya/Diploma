@@ -1,11 +1,15 @@
 import 'dart:ui';
 
+import 'package:diplom/api/branch.dart';
 import 'package:diplom/api/courses.dart';
 import 'package:diplom/blocs/course/course_bloc.dart';
 import 'package:diplom/blocs/course/course_event.dart';
 import 'package:diplom/blocs/course/course_state.dart';
 import 'package:diplom/blocs/courseTests/course_tests_bloc.dart';
 import 'package:diplom/blocs/courseTests/course_tests_event.dart';
+import 'package:diplom/blocs/page/page_bloc.dart';
+import 'package:diplom/blocs/page/page_event.dart';
+import 'package:diplom/blocs/page/page_state.dart';
 import 'package:diplom/blocs/userBestMark/user_best_mark_bloc.dart';
 import 'package:diplom/blocs/userBestMark/user_best_mark_event.dart';
 import 'package:diplom/blocs/weekLogs/week_logs_bloc.dart';
@@ -26,6 +30,7 @@ class CourseWidget extends StatefulWidget {
   final String course;
   final String userId;
   final CourseBloc courseBloc;
+  final PageBloc pageBloc;
   final List<UserLog> userLogs;
 
   const CourseWidget(
@@ -33,6 +38,7 @@ class CourseWidget extends StatefulWidget {
       required this.course,
       required this.userId,
       required this.courseBloc,
+      required this.pageBloc,
       required this.userLogs})
       : super(key: key);
 
@@ -44,16 +50,34 @@ class _CourseWidgetState extends State<CourseWidget> {
   int _progress = 0;
   double _time = 0;
   List<String> _branches = [];
+  List<String> _branchCaptions = [];
+  int _numberOfBranchesChildren = 0;
+
+  void initPageState(branches) async {
+    List<String> pagesNames = [];
+    int numberOfBranchesChildren = 0;
+    final Calculator calculator = Calculator();
+
+    for(String branch in branches) {
+      dynamic page = await fetchPageByBranch(branch);
+      List<dynamic> pageChildren = await fetchPageChildrenByBranch(branch);
+      numberOfBranchesChildren += pageChildren.length;
+      pagesNames.add(page.caption);
+    }
+
+    setState(() {
+      _branchCaptions = pagesNames;
+      _progress = calculator.countProgress(widget.userLogs, widget.course, branches, numberOfBranchesChildren);
+      _time = calculator.countTime(widget.userLogs, widget.course);
+      _branches = branches;
+      _numberOfBranchesChildren = numberOfBranchesChildren;
+    });
+  }
 
   @override
   void initState() {
     fetchCoursesByName(widget.course).then((value) {
-      final Calculator calculator = Calculator();
-      setState(() {
-        _progress = calculator.countProgress(widget.userLogs, widget.course, value.branches);
-        _time = calculator.countTime(widget.userLogs, widget.course);
-        _branches = value.branches;
-      });
+      initPageState(value.branches);
     });
     super.initState();
   }
@@ -179,7 +203,10 @@ class _CourseWidgetState extends State<CourseWidget> {
                   course: widget.course.capitalize(),
                   courseProgress: _progress,
                   timeSpent: _time,
-                  branches: _branches,)),
+                  branches: _branches,
+                  branchCaptions: _branchCaptions,
+                  numberOfBranchesChildren: _numberOfBranchesChildren,
+              )),
         );
       },
     );

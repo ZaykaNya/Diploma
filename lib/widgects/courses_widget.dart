@@ -3,6 +3,7 @@ import 'dart:ui';
 import 'package:diplom/blocs/course/course_bloc.dart';
 import 'package:diplom/blocs/course/course_event.dart';
 import 'package:diplom/blocs/course/course_state.dart';
+import 'package:diplom/blocs/page/page_bloc.dart';
 import 'package:diplom/blocs/userLogs/user_logs_bloc.dart';
 import 'package:diplom/blocs/userLogs/user_logs_state.dart';
 import 'package:flutter/material.dart';
@@ -52,24 +53,35 @@ class Courses extends StatelessWidget {
                     )
                   ] else ...[
                     for (var course in courses)
-                      BlocProvider<CourseBloc>(
-                        create: (_) => CourseBloc(),
+                      MultiBlocProvider(
+                        providers: [
+                          BlocProvider<CourseBloc>(
+                              create: (_) => CourseBloc(),
+                          ),
+                          BlocProvider<PageBloc>(
+                            create: (_) => PageBloc(),
+                          ),
+                        ],
                         child: BlocBuilder<UserLogsBloc, UserLogsState>(
                             builder: (context, userState) {
-                          final courseBloc =
-                              BlocProvider.of<CourseBloc>(context);
-                          if (userState is UserLogsLoaded) {
-                            return CourseWidget(
-                              course: course['course'],
-                              userId: userId,
-                              userLogs: userState.userLogs,
-                              courseBloc: courseBloc,
-                            );
-                          } else {
-                            return Container();
-                          }
-                        }),
+                              final courseBloc =
+                                BlocProvider.of<CourseBloc>(context);
+                              final pageBloc =
+                                BlocProvider.of<PageBloc>(context);
+                              if (userState is UserLogsLoaded) {
+                                return CourseWidget(
+                                  course: course['course'],
+                                  userId: userId,
+                                  userLogs: userState.userLogs,
+                                  courseBloc: courseBloc,
+                                  pageBloc: pageBloc,
+                                );
+                              } else {
+                                return Container();
+                              }
+                            }),
                       ),
+
                   ]
                 ],
               ),

@@ -24,6 +24,7 @@ class StatisticWidget extends StatefulWidget {
   final List<Test> courseTests;
   final List<UserLog> userWeekLogs;
   final List<String> branches;
+  final List<String> branchCaptions;
 
   const StatisticWidget({
     Key? key,
@@ -34,6 +35,7 @@ class StatisticWidget extends StatefulWidget {
     required this.courseTests,
     required this.timeSpent,
     required this.branches,
+    required this.branchCaptions,
   }) : super(key: key);
 
   @override
@@ -144,6 +146,7 @@ class _StatisticWidgetState extends State<StatisticWidget> {
                             if (userState is UserLogsLoaded) {
                               return TimeDetailsPage(
                                 branches: widget.branches,
+                                branchCaptions: widget.branchCaptions,
                                 userWeekLogs: widget.userWeekLogs,
                                 userLogs: userState.userLogs,
                                 course: widget.course);

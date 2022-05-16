@@ -12,12 +12,14 @@ class RareAchievements extends StatefulWidget {
   final Mark bestMark;
   final List<String> branches;
   final List<UserLog> userLogs;
+  final int numberOfBranchesChildren;
 
   const RareAchievements(
       {Key? key,
       required this.course,
       required this.bestMark,
       required this.userLogs,
+      required this.numberOfBranchesChildren,
       required this.branches})
       : super(key: key);
 
@@ -33,7 +35,7 @@ class _RareAchievementsState extends State<RareAchievements> {
   void initState() {
     final Calculator calculator = Calculator();
     List listOfAchievements = calculator.getCourseAchievements(
-        widget.bestMark, widget.course, widget.userLogs, widget.branches);
+        widget.bestMark, widget.course, widget.userLogs, widget.branches, widget.numberOfBranchesChildren);
     _achievements = listOfAchievements[0];
     _uncompletedAchievements = listOfAchievements[1];
     super.initState();

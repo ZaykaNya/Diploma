@@ -13,6 +13,7 @@ import 'package:syncfusion_flutter_charts/charts.dart';
 
 class TimeDetailsPage extends StatefulWidget {
   final List<String> branches;
+  final List<String> branchCaptions;
   final List<UserLog> userWeekLogs;
   final List<UserLog> userLogs;
   final String course;
@@ -20,6 +21,7 @@ class TimeDetailsPage extends StatefulWidget {
   const TimeDetailsPage(
       {Key? key,
       required this.branches,
+      required this.branchCaptions,
       required this.course,
       required this.userWeekLogs,
       required this.userLogs})
@@ -110,8 +112,8 @@ class _TimeDetailsPageState extends State<TimeDetailsPage> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      for (var i = 0; i < widget.branches.length; i++) ...{
-                        Text('${i + 1} - ${widget.branches[i]}',
+                      for (var i = 0; i < widget.branchCaptions.length; i++) ...{
+                        Text('${i + 1} - ${widget.branchCaptions[i]}',
                             style: const TextStyle(
                                 color: Color.fromRGBO(93, 92, 99, 1)))
                       }
@@ -152,8 +154,8 @@ class _TimeDetailsPageState extends State<TimeDetailsPage> {
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            for (var i = 0; i < widget.branches.length; i++) ...{
-                              Text('${i + 1} - ${widget.branches[i]}',
+                            for (var i = 0; i < widget.branchCaptions.length; i++) ...{
+                              Text('${i + 1} - ${widget.branchCaptions[i]}',
                                   style: const TextStyle(
                                       color: Color.fromRGBO(93, 92, 99, 1)))
                             }

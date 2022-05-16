@@ -22,14 +22,18 @@ class CoursePage extends StatefulWidget {
   final String course;
   final double timeSpent;
   final int courseProgress;
+  final int numberOfBranchesChildren;
   final List<String> branches;
+  final List<String> branchCaptions;
 
   const CoursePage(
       {Key? key,
       required this.course,
       required this.courseProgress,
+      required this.numberOfBranchesChildren,
       required this.timeSpent,
       required this.branches,
+      required this.branchCaptions,
       })
       : super(key: key);
 
@@ -144,6 +148,7 @@ class _CoursePageState extends State<CoursePage> with TickerProviderStateMixin {
                                   bestMark: userBestMarkState.userBestMark,
                                   userLogs: userLogsState.userLogs,
                                   branches: _branches,
+                                  numberOfBranchesChildren: widget.numberOfBranchesChildren,
                               );
                             } else {
                               return Container();
@@ -173,6 +178,7 @@ class _CoursePageState extends State<CoursePage> with TickerProviderStateMixin {
                                             bestMark: userBestMarkState.userBestMark,
                                             courseTests: courseTestsState.courseTests,
                                             branches: widget.branches,
+                                            branchCaptions: widget.branchCaptions,
                                           );
                                         } else {
                                           return Container();
