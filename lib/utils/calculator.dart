@@ -129,7 +129,7 @@ class Calculator {
     return time;
   }
 
-  /// Counts daily activity (45 minutes = 100%)
+  /// Counts daily activity (180 minutes = 100%)
   double countWeeklyProgress(logs) {
     double progress = 0;
 
@@ -137,7 +137,7 @@ class Calculator {
       progress += int.parse(userLog.seconds.toString());
     }
 
-    progress /= 27;
+    progress /= 108;
 
     if (progress > 100) {
       progress = 100;
