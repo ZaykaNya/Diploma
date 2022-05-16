@@ -1,10 +1,12 @@
 import 'dart:async';
 import 'dart:convert';
+import 'package:diplom/api/branch.dart';
 import 'package:diplom/api/courses.dart';
 import 'package:diplom/api/logs.dart';
 import 'package:diplom/api/tests.dart';
 import 'package:diplom/api/users.dart';
 import 'package:diplom/models/auth_user.dart';
+import 'package:diplom/models/branch.dart';
 import 'package:diplom/models/course.dart';
 import 'package:diplom/models/log.dart';
 import 'package:diplom/models/mark.dart';
@@ -58,5 +60,13 @@ class UserRepository {
 
   Future<Mark> getUserBestMark(id, course) async {
     return fetchUserBestCourseMarkById(id, course);
+  }
+
+  Future<Page> getPageByBranch(branch) async {
+    return fetchPageByBranch(branch);
+  }
+
+  Future<List<Page>> getPageChildrenByBranch(branch) async {
+    return fetchPageChildrenByBranch(branch);
   }
 }
