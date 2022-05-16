@@ -175,7 +175,11 @@ class Calculator {
         }
       }
 
-      progress = (time / 30).round();
+      if(course['course'] == 'javascript-basics') {
+        progress = (time / 264).round();
+      } else {
+        progress = (time / 48).round();
+      }
 
       if (progress >= 100) {
         completedCourses += 1;
