@@ -14,6 +14,7 @@ import 'package:diplom/blocs/userBestMark/user_best_mark_bloc.dart';
 import 'package:diplom/blocs/userBestMark/user_best_mark_event.dart';
 import 'package:diplom/blocs/weekLogs/week_logs_bloc.dart';
 import 'package:diplom/blocs/weekLogs/week_logs_event.dart';
+import 'package:diplom/models/branch.dart';
 import 'package:diplom/models/log.dart';
 import 'package:diplom/utils/calculator.dart';
 import 'package:diplom/widgects/pages/course_page.dart';
@@ -51,17 +52,17 @@ class _CourseWidgetState extends State<CourseWidget> {
   double _time = 0;
   List<String> _branches = [];
   List<String> _branchCaptions = [];
-  int _numberOfBranchesChildren = 0;
+  List<List<dynamic>> _numberOfBranchesChildren = [];
 
   void initPageState(branches) async {
     List<String> pagesNames = [];
-    int numberOfBranchesChildren = 0;
+    List<List<dynamic>> numberOfBranchesChildren = [];
     final Calculator calculator = Calculator();
 
     for(String branch in branches) {
       dynamic page = await fetchPageByBranch(branch);
       List<dynamic> pageChildren = await fetchPageChildrenByBranch(branch);
-      numberOfBranchesChildren += pageChildren.length;
+      numberOfBranchesChildren.add(pageChildren);
       pagesNames.add(page.caption);
     }
 

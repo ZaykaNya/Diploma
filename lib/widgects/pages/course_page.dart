@@ -22,7 +22,7 @@ class CoursePage extends StatefulWidget {
   final String course;
   final double timeSpent;
   final int courseProgress;
-  final int numberOfBranchesChildren;
+  final List<List<dynamic>> numberOfBranchesChildren;
   final List<String> branches;
   final List<String> branchCaptions;
 

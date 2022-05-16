@@ -10,26 +10,46 @@ import 'package:intl/intl.dart';
 class Calculator {
   /// Counts progress for course by time spent on branches (2 hours to complete)
   int countProgress(userLogs, course, branches, numberOfBranchesChildren) {
+    int courseToCompleteTime = 0;
     int progress = 0;
+    int index = 0;
     double time = 0;
+    int numberOfPages = 0;
+
+    for(var pages in numberOfBranchesChildren) {
+      if(pages.length > 0) {
+        numberOfPages += int.parse(pages.length.toString());
+      }
+      numberOfPages += 1;
+    }
+
+    courseToCompleteTime = numberOfPages * 600;
 
     for (String branch in branches) {
       double branchTime = 0;
+      List<String> childrenName = [];
 
-      for (UserLog userLog in userLogs) {
-        if (userLog.contentId!.contains(branch)) {
-          branchTime += int.parse(userLog.seconds.toString());
-        }
-
-        if (branchTime > 7200 / branches.length) {
-          branchTime = 7200 / branches.length;
+      if(numberOfBranchesChildren[index].length > 0) {
+        for(var item in numberOfBranchesChildren[index]) {
+          childrenName.add(item.view);
         }
       }
 
+      for (UserLog userLog in userLogs) {
+        if (userLog.contentId!.contains(branch) || childrenName.contains(userLog.contentId)) {
+          branchTime += int.parse(userLog.seconds.toString());
+        }
+      }
+
+      if (branchTime > courseToCompleteTime / branches.length) {
+        branchTime = courseToCompleteTime / branches.length;
+      }
+
+      index++;
       time += branchTime;
     }
 
-    progress = (time / 72).round();
+    progress = (time / (courseToCompleteTime / 100)).round();
 
     if (progress > 100) {
       progress = 100;

@@ -12,7 +12,7 @@ class RareAchievements extends StatefulWidget {
   final Mark bestMark;
   final List<String> branches;
   final List<UserLog> userLogs;
-  final int numberOfBranchesChildren;
+  final List<List<dynamic>> numberOfBranchesChildren;
 
   const RareAchievements(
       {Key? key,
