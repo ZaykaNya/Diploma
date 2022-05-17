@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:ui';
 
 import 'package:diplom/api/branch.dart';
@@ -8,8 +9,6 @@ import 'package:diplom/blocs/course/course_state.dart';
 import 'package:diplom/blocs/courseTests/course_tests_bloc.dart';
 import 'package:diplom/blocs/courseTests/course_tests_event.dart';
 import 'package:diplom/blocs/page/page_bloc.dart';
-import 'package:diplom/blocs/page/page_event.dart';
-import 'package:diplom/blocs/page/page_state.dart';
 import 'package:diplom/blocs/userBestMark/user_best_mark_bloc.dart';
 import 'package:diplom/blocs/userBestMark/user_best_mark_event.dart';
 import 'package:diplom/blocs/weekLogs/week_logs_bloc.dart';
@@ -20,6 +19,7 @@ import 'package:diplom/utils/calculator.dart';
 import 'package:diplom/widgects/pages/course_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 extension StringExtension on String {
   String capitalize() {
@@ -55,24 +55,82 @@ class _CourseWidgetState extends State<CourseWidget> {
   List<List<dynamic>> _numberOfBranchesChildren = [];
 
   void initPageState(branches) async {
-    List<String> pagesNames = [];
-    List<List<dynamic>> numberOfBranchesChildren = [];
-    final Calculator calculator = Calculator();
+    final prefs = await SharedPreferences.getInstance();
 
-    for(String branch in branches) {
-      dynamic page = await fetchPageByBranch(branch);
-      List<dynamic> pageChildren = await fetchPageChildrenByBranch(branch);
-      numberOfBranchesChildren.add(pageChildren);
-      pagesNames.add(page.caption);
+    final String? numberOfBranchesChildrenFromCache = prefs.getString('${widget.course}ChartTestsDurationDataCompare');
+    final int? progressFromCache = prefs.getInt('${widget.course}Progress');
+    final double? timeFromCache = prefs.getDouble('${widget.course}Time');
+    final List<String>? branchesFromCache = prefs.getStringList('${widget.course}Branches');
+    final List<String>? branchCaptionsFromCache = prefs.getStringList('${widget.course}BranchCaptions');
+
+    if (numberOfBranchesChildrenFromCache != null &&
+        progressFromCache != null &&
+        timeFromCache != null &&
+        branchesFromCache != null &&
+        branchCaptionsFromCache != null) {
+      List<List<dynamic>> newNumberOfBranchesChildren = [];
+
+      for (var data in jsonDecode(numberOfBranchesChildrenFromCache)) {
+        List temp = [];
+
+        for (var item in data) {
+          temp.add(PageInCourse.fromJson(item));
+        }
+
+        newNumberOfBranchesChildren.add(temp);
+      }
+
+      setState(() {
+        _branchCaptions = branchCaptionsFromCache;
+        _progress = progressFromCache;
+        _time = timeFromCache;
+        _branches = branchesFromCache;
+        _numberOfBranchesChildren = newNumberOfBranchesChildren;
+      });
+    } else {
+      List<String> pagesNames = [];
+      List<List<dynamic>> numberOfBranchesChildren = [];
+      final Calculator calculator = Calculator();
+
+      for (String branch in branches) {
+        dynamic page = await fetchPageByBranch(branch);
+        List<dynamic> pageChildren = await fetchPageChildrenByBranch(branch);
+        numberOfBranchesChildren.add(pageChildren);
+        pagesNames.add(page.caption);
+      }
+
+      setState(() {
+        _branchCaptions = pagesNames;
+        _progress = calculator.countProgress(
+            widget.userLogs, widget.course, branches, numberOfBranchesChildren);
+        _time = calculator.countTime(widget.userLogs, widget.course);
+        _branches = branches;
+        _numberOfBranchesChildren = numberOfBranchesChildren;
+      });
+
+      List<List<dynamic>> numberOfBranchesChildrenToJSON = [];
+
+      for (var data in _numberOfBranchesChildren) {
+        List temp = [];
+
+        for (var item in data) {
+          temp.add({
+            'caption': item.caption,
+            'view': item.view,
+          });
+        }
+
+        numberOfBranchesChildrenToJSON.add(temp);
+      }
+
+      await prefs.setString('${widget.course}ChartTestsDurationDataCompare',
+          jsonEncode(numberOfBranchesChildrenToJSON));
+      await prefs.setInt('${widget.course}Progress', _progress);
+      await prefs.setDouble('${widget.course}Time', _time);
+      await prefs.setStringList('${widget.course}Branches', _branches);
+      await prefs.setStringList(
+          '${widget.course}BranchCaptions', _branchCaptions);
     }
-
-    setState(() {
-      _branchCaptions = pagesNames;
-      _progress = calculator.countProgress(widget.userLogs, widget.course, branches, numberOfBranchesChildren);
-      _time = calculator.countTime(widget.userLogs, widget.course);
-      _branches = branches;
-      _numberOfBranchesChildren = numberOfBranchesChildren;
-    });
   }
 
   @override
@@ -104,17 +162,18 @@ class _CourseWidgetState extends State<CourseWidget> {
             children: [
               BlocBuilder<CourseBloc, CourseState>(
                   builder: (context, courseState) {
-                    if (courseState is CourseLoaded) {
-                      final String image = 'http://semantic-portal.net/images/${courseState.course.course.image}';
-                      if(courseState.course.course.image != "") {
-                        return Image.network(image, height: 103, width: 103);
-                      } else {
-                        return Image.asset('assets/images/react_icon.png');
-                      }
-                    } else {
-                      return Container();
-                    }
-                  }),
+                if (courseState is CourseLoaded) {
+                  final String image =
+                      'http://semantic-portal.net/images/${courseState.course.course.image}';
+                  if (courseState.course.course.image != "") {
+                    return Image.network(image, height: 103, width: 103);
+                  } else {
+                    return Image.asset('assets/images/react_icon.png');
+                  }
+                } else {
+                  return Container();
+                }
+              }),
               const Padding(padding: EdgeInsets.only(right: 16)),
               Expanded(
                 child: Column(
@@ -195,19 +254,20 @@ class _CourseWidgetState extends State<CourseWidget> {
         userWeekLogsBloc.add(GetWeekLogs(
             id: widget.userId,
             time: '${weekAgo.year}-${weekAgo.month}-${weekAgo.day}'));
-        userBestMarkBloc.add(GetUserBestMark(id: widget.userId, course: widget.course));
+        userBestMarkBloc
+            .add(GetUserBestMark(id: widget.userId, course: widget.course));
         courseTestsBloc.add(GetCourseTests(course: widget.course));
         Navigator.push(
           context,
           MaterialPageRoute(
               builder: (context) => CoursePage(
-                  course: widget.course.capitalize(),
-                  courseProgress: _progress,
-                  timeSpent: _time,
-                  branches: _branches,
-                  branchCaptions: _branchCaptions,
-                  numberOfBranchesChildren: _numberOfBranchesChildren,
-              )),
+                    course: widget.course.capitalize(),
+                    courseProgress: _progress,
+                    timeSpent: _time,
+                    branches: _branches,
+                    branchCaptions: _branchCaptions,
+                    numberOfBranchesChildren: _numberOfBranchesChildren,
+                  )),
         );
       },
     );

@@ -1,14 +1,14 @@
-class Page {
+class PageInCourse {
   final String? view;
   final String? caption;
 
-  const Page({
+  const PageInCourse({
     required this.view,
     required this.caption,
   });
 
-  factory Page.fromJson(Map<String, dynamic> json) {
-    return Page(
+  factory PageInCourse.fromJson(Map<String, dynamic> json) {
+    return PageInCourse(
       view: json['view'],
       caption: json['caption']
     );

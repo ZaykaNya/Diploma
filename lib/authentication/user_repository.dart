@@ -62,11 +62,11 @@ class UserRepository {
     return fetchUserBestCourseMarkById(id, course);
   }
 
-  Future<Page> getPageByBranch(branch) async {
+  Future<PageInCourse> getPageByBranch(branch) async {
     return fetchPageByBranch(branch);
   }
 
-  Future<List<Page>> getPageChildrenByBranch(branch) async {
+  Future<List<PageInCourse>> getPageChildrenByBranch(branch) async {
     return fetchPageChildrenByBranch(branch);
   }
 }

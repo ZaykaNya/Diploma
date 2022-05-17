@@ -13,7 +13,7 @@ class PageInitial extends PageState {}
 class PageLoading extends PageState {}
 
 class PageLoaded extends PageState {
-  final Page branch;
+  final PageInCourse branch;
   const PageLoaded(this.branch);
 }
 
