@@ -2,6 +2,7 @@ import 'dart:ui';
 
 import 'package:diplom/models/log.dart';
 import 'package:diplom/utils/calculator.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:syncfusion_flutter_gauges/gauges.dart';
 import 'package:flutter/material.dart';
 
@@ -24,15 +25,41 @@ class _AverageDashboardState extends State<AverageDashboard> {
 
   @override
   void initState() {
-    final Calculator calculator = Calculator();
-    List coursesProgress = calculator.countCompletedCourses(widget.courses, widget.userLogs);
-    setState(() {
-      _weeklyProgress = calculator.countWeeklyProgress(widget.logs);
-      _completedCourses = coursesProgress[0];
-      _inProgressCourses = coursesProgress[1];
-      _message = calculator.getDailyProgressMessage(_weeklyProgress);
-    });
     super.initState();
+    initWidgetState();
+  }
+
+  void initWidgetState() async {
+    final prefs = await SharedPreferences.getInstance();
+
+    final double? weeklyProgress = prefs.getDouble('weeklyProgress');
+    final int? completedCourses = prefs.getInt('completedCourses');
+    final int? inProgressCourses = prefs.getInt('inProgressCourses');
+    final String? message = prefs.getString('message');
+
+    if(weeklyProgress != null && completedCourses != null && inProgressCourses != null && message != null) {
+      setState(() {
+        _weeklyProgress = weeklyProgress;
+        _completedCourses = completedCourses;
+        _inProgressCourses = inProgressCourses;
+        _message = message;
+      });
+    } else {
+      final Calculator calculator = Calculator();
+      List coursesProgress = calculator.countCompletedCourses(widget.courses, widget.userLogs);
+
+      setState(() {
+        _weeklyProgress = calculator.countWeeklyProgress(widget.logs);
+        _completedCourses = coursesProgress[0];
+        _inProgressCourses = coursesProgress[1];
+        _message = calculator.getDailyProgressMessage(_weeklyProgress);
+      });
+
+      await prefs.setDouble('weeklyProgress', _weeklyProgress);
+      await prefs.setInt('completedCourses', _completedCourses);
+      await prefs.setInt('inProgressCourses', _inProgressCourses);
+      await prefs.setString('message', _message);
+    }
   }
 
   @override
