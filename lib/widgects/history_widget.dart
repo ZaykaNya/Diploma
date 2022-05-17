@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:ui';
 
 import 'package:diplom/api/courses.dart';
@@ -8,6 +9,7 @@ import 'package:diplom/models/log.dart';
 import 'package:diplom/models/test.dart';
 import 'package:diplom/utils/calculator.dart';
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
 
 class History extends StatefulWidget {
@@ -51,7 +53,7 @@ class _HistoryState extends State<History> with TickerProviderStateMixin {
       setState(() {});
     });
     controller.repeat(reverse: true);
-    initPlatformState(widget.courses);
+    initPageState(widget.courses);
     super.initState();
   }
 
@@ -61,38 +63,131 @@ class _HistoryState extends State<History> with TickerProviderStateMixin {
     super.dispose();
   }
 
-  void initPlatformState(courses) async {
-    Calculator calculator = Calculator();
-    List<Course> listOfCourses = [];
-    List<List<Test>> listOfCoursesTests = [];
+  void initPageState(courses) async {
+    final prefs = await SharedPreferences.getInstance();
 
-    for (var course in courses) {
-      dynamic data = await fetchCoursesByName(course['course']);
-      listOfCourses.add(data);
+    final String? chartTimeDataCompareStr = prefs.getString('chartTimeDataCompare');
+    final String? testsTimeWordStr = prefs.getString('testsTimeWord');
+    final String? testsTimeStr = prefs.getString('testsTime');
+    final String? chartTestsResultsDataCompareStr = prefs.getString('chartTestsResultsDataCompare');
+    final String? testsPercentageWordStr = prefs.getString('testsPercentageWord');
+    final String? testsPercentageStr = prefs.getString('testsPercentage');
+    final String? chartTestsDurationDataCompareStr = prefs.getString('chartTestsDurationDataCompare');
+    final String? courseTimeWordStr = prefs.getString('courseTimeWord');
+    final String? courseTimeStr = prefs.getString('courseTime');
 
-      dynamic listOfCourseTests = await fetchTestsFromCourse(course['course']);
-      listOfCoursesTests.add(listOfCourseTests);
+    if(chartTimeDataCompareStr != null && testsTimeWordStr != null && testsTimeStr != null && chartTestsResultsDataCompareStr != null
+        && testsPercentageWordStr != null && testsPercentageStr != null && chartTestsDurationDataCompareStr != null && courseTimeWordStr != null
+        && courseTimeStr != null) {
+      List newChartTimeDataCompareFromJSON = jsonDecode(chartTimeDataCompareStr);
+      List newChartTestsResultsDataCompareFromJSON = jsonDecode(chartTestsResultsDataCompareStr);
+      List newChartTestsDurationDataCompareFromJSON = jsonDecode(chartTestsDurationDataCompareStr);
+
+      List<ChartDataCompare> newChartTimeDataCompare = [];
+      List<ChartDataCompare> newChartTestsResultsDataCompare = [];
+      List<ChartDataCompare> newChartTestsDurationDataCompare = [];
+
+      for(var data in newChartTimeDataCompareFromJSON) {
+        newChartTimeDataCompare.add(
+            ChartDataCompare(data['x'], data['y1'], data['y2'])
+        );
+      }
+
+      for(var data in newChartTestsResultsDataCompareFromJSON) {
+        newChartTestsResultsDataCompare.add(
+            ChartDataCompare(data['x'], data['y1'], data['y2'])
+        );
+      }
+
+      for(var data in newChartTestsDurationDataCompareFromJSON) {
+        newChartTestsDurationDataCompare.add(
+            ChartDataCompare(data['x'], data['y1'], data['y2'])
+        );
+      }
+
+      setState(() {
+        _chartTimeDataCompare = newChartTimeDataCompare;
+        _courseTime = courseTimeStr;
+        _courseTimeWord = courseTimeWordStr;
+        _chartTestsResultsDataCompare = newChartTimeDataCompare;
+        _testsPercentage = testsPercentageStr;
+        _testsPercentageWord = testsPercentageWordStr;
+        _chartTestsDurationDataCompare = newChartTestsDurationDataCompare;
+        _testsTime = testsTimeStr;
+        _testsTimeWord = testsTimeWordStr;
+        _pageLoaded = true;
+      });
+    } else {
+      Calculator calculator = Calculator();
+      List<Course> listOfCourses = [];
+      List<List<Test>> listOfCoursesTests = [];
+
+      for (var course in courses) {
+        dynamic data = await fetchCoursesByName(course['course']);
+        listOfCourses.add(data);
+
+        dynamic listOfCourseTests = await fetchTestsFromCourse(course['course']);
+        listOfCoursesTests.add(listOfCourseTests);
+      }
+
+      List timeChartData = calculator.getTimeSpentOnCourseCompareData(
+          widget.courses, widget.userLogs, widget.allLogs, listOfCourses);
+      List testsChartData = calculator.getTestResultCompareData(
+          widget.courses, listOfCoursesTests, widget.userTests);
+      List testsDurationChartData = calculator.getTestDurationCompareData(
+          widget.courses, listOfCoursesTests, widget.userTests);
+
+      setState(() {
+        _chartTimeDataCompare = timeChartData[0];
+        _courseTime = timeChartData[1];
+        _courseTimeWord = timeChartData[2];
+        _chartTestsResultsDataCompare = testsChartData[0];
+        _testsPercentage = testsChartData[1];
+        _testsPercentageWord = testsChartData[2];
+        _chartTestsDurationDataCompare = testsDurationChartData[0];
+        _testsTime = testsDurationChartData[1];
+        _testsTimeWord = testsDurationChartData[2];
+        _pageLoaded = true;
+      });
+
+      List chartTimeDataCompareForJSON = [];
+      List chartTestsResultsDataCompareForJSON = [];
+      List chartTestsDurationDataCompareForJSON = [];
+
+      for(ChartDataCompare data in _chartTimeDataCompare) {
+        chartTimeDataCompareForJSON.add({
+          'x': data.x,
+          'y1': data.y1,
+          'y2': data.y2
+        });
+      }
+
+      for(ChartDataCompare data in _chartTestsResultsDataCompare) {
+        chartTestsResultsDataCompareForJSON.add({
+          'x': data.x,
+          'y1': data.y1,
+          'y2': data.y2
+        });
+      }
+
+      for(ChartDataCompare data in _chartTestsDurationDataCompare) {
+        chartTestsDurationDataCompareForJSON.add({
+          'x': data.x,
+          'y1': data.y1,
+          'y2': data.y2
+        });
+      }
+
+      await prefs.setString('chartTimeDataCompare', jsonEncode(chartTimeDataCompareForJSON));
+      await prefs.setString('testsTimeWord', _testsTimeWord);
+      await prefs.setString('testsTime', _testsTime);
+      await prefs.setString('chartTestsResultsDataCompare', jsonEncode(chartTestsResultsDataCompareForJSON));
+      await prefs.setString('testsPercentageWord', _testsPercentageWord);
+      await prefs.setString('testsPercentage', _testsPercentage);
+      await prefs.setString('chartTestsDurationDataCompare', jsonEncode(chartTestsDurationDataCompareForJSON));
+      await prefs.setString('courseTimeWord', _courseTimeWord);
+      await prefs.setString('courseTime', _courseTime);
     }
-
-    List timeChartData = calculator.getTimeSpentOnCourseCompareData(
-        widget.courses, widget.userLogs, widget.allLogs, listOfCourses);
-    List testsChartData = calculator.getTestResultCompareData(
-        widget.courses, listOfCoursesTests, widget.userTests);
-    List testsDurationChartData = calculator.getTestDurationCompareData(
-        widget.courses, listOfCoursesTests, widget.userTests);
-
-    setState(() {
-      _chartTimeDataCompare = timeChartData[0];
-      _courseTime = timeChartData[1];
-      _courseTimeWord = timeChartData[2];
-      _chartTestsResultsDataCompare = testsChartData[0];
-      _testsPercentage = testsChartData[1];
-      _testsPercentageWord = testsChartData[2];
-      _chartTestsDurationDataCompare = testsDurationChartData[0];
-      _testsTime = testsDurationChartData[1];
-      _testsTimeWord = testsDurationChartData[2];
-      _pageLoaded = true;
-    });
   }
 
   @override

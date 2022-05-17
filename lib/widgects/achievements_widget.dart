@@ -1,9 +1,11 @@
+import 'dart:convert';
 import 'dart:ui';
 
 import 'package:diplom/models/log.dart';
 import 'package:diplom/models/test.dart';
 import 'package:diplom/utils/calculator.dart';
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import 'achievement_widget.dart';
 
@@ -25,12 +27,37 @@ class _AchievementsState extends State<Achievements> {
 
   @override
   void initState() {
-    final Calculator calculator = Calculator();
-    List listOfAchievements =
-        calculator.getGlobalAchievements(widget.courses, widget.userLogs, widget.userTests);
-    _achievements = listOfAchievements[0];
-    _uncompletedAchievements = listOfAchievements[1];
+    initWidgetState();
     super.initState();
+  }
+
+  void initWidgetState() async {
+    final prefs = await SharedPreferences.getInstance();
+
+    final String? achievementsStr = prefs.getString('achievements');
+    final String? uncompletedAchievementsStr = prefs.getString('uncompletedAchievements');
+
+    if(achievementsStr != null && uncompletedAchievementsStr != null) {
+      dynamic achievements = jsonDecode(achievementsStr);
+      dynamic uncompletedAchievements = jsonDecode(uncompletedAchievementsStr);
+
+      setState(() {
+        _achievements = achievements;
+        _uncompletedAchievements = uncompletedAchievements;
+      });
+    } else {
+      final Calculator calculator = Calculator();
+
+      List listOfAchievements =
+      calculator.getGlobalAchievements(widget.courses, widget.userLogs, widget.userTests);
+      setState(() {
+        _achievements = listOfAchievements[0];
+        _uncompletedAchievements = listOfAchievements[1];
+      });
+
+      await prefs.setString('achievements', jsonEncode(_achievements));
+      await prefs.setString('uncompletedAchievements', jsonEncode(_uncompletedAchievements));
+    }
   }
 
   @override
