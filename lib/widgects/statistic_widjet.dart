@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:ui';
 
 import 'package:diplom/blocs/userLogs/user_logs_bloc.dart';
@@ -5,6 +6,7 @@ import 'package:diplom/blocs/userLogs/user_logs_state.dart';
 import 'package:diplom/blocs/userTests/user_tests_bloc.dart';
 import 'package:diplom/blocs/userTests/user_tests_state.dart';
 import 'package:diplom/models/chart_data.dart';
+import 'package:diplom/models/chart_data_compare.dart';
 import 'package:diplom/models/log.dart';
 import 'package:diplom/models/mark.dart';
 import 'package:diplom/models/test.dart';
@@ -13,6 +15,7 @@ import 'package:diplom/widgects/pages/tests_details_page.dart';
 import 'package:diplom/widgects/pages/time_details_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
 import 'package:syncfusion_flutter_gauges/gauges.dart';
 
@@ -48,12 +51,69 @@ class _StatisticWidgetState extends State<StatisticWidget> {
 
   @override
   void initState() {
-    Calculator calculator = Calculator();
-    _timeChartData =
-        calculator.getTimeChartData(widget.userWeekLogs, widget.course);
-    _testChartData =
-        calculator.getTestsChartData(widget.courseTests, widget.bestMark);
+    initWidgetState();
     super.initState();
+  }
+
+  void initWidgetState() async {
+    final prefs = await SharedPreferences.getInstance();
+
+    final String? timeChartDataStr = prefs.getString('${widget.course}CourseTimeChartData');
+    final String? testChartDataStr = prefs.getString('${widget.course}CourseTestChartData');
+
+    if(timeChartDataStr != null && testChartDataStr != null) {
+      List newTimeChartDataFromJSON = jsonDecode(timeChartDataStr);
+      List newTestsChartDataFromJSON = jsonDecode(testChartDataStr);
+
+      List<ChartData> newTimeChartData = [];
+      List<ChartData> newTestsChartData = [];
+
+      for(var data in newTimeChartDataFromJSON) {
+        newTimeChartData.add(
+            ChartData(data['x'], data['y'])
+        );
+      }
+
+      for(var data in newTestsChartDataFromJSON) {
+        newTestsChartData.add(
+            ChartData(data['x'], data['y'])
+        );
+      }
+
+      setState(() {
+        _timeChartData = newTimeChartData;
+        _testChartData = newTestsChartData;
+      });
+    } else {
+      Calculator calculator = Calculator();
+
+      setState(() {
+        _timeChartData =
+            calculator.getTimeChartData(widget.userWeekLogs, widget.course);
+        _testChartData =
+            calculator.getTestsChartData(widget.courseTests, widget.bestMark);
+      });
+
+      List timeChartDataCompareForJSON = [];
+      List testsChartResultsDataCompareForJSON = [];
+
+      for(ChartData data in _timeChartData) {
+        timeChartDataCompareForJSON.add({
+          'x': data.x,
+          'y': data.y,
+        });
+      }
+
+      for(ChartData data in _testChartData) {
+        testsChartResultsDataCompareForJSON.add({
+          'x': data.x,
+          'y': data.y,
+        });
+      }
+
+      await prefs.setString('${widget.course}CourseTimeChartData', jsonEncode(timeChartDataCompareForJSON));
+      await prefs.setString('${widget.course}CourseTestChartData', jsonEncode(testsChartResultsDataCompareForJSON));
+    }
   }
 
   @override

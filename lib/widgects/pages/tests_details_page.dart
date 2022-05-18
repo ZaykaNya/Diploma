@@ -30,9 +30,14 @@ class _TestsDetailsPageState extends State<TestsDetailsPage> {
 
   @override
   void initState() {
-    _courseName = widget.course.toLowerCase().split('-')[0];
-    print(_courseName);
+    initWidgetState();
     super.initState();
+  }
+
+  void initWidgetState() async {
+    setState(() {
+      _courseName = widget.course.toLowerCase().split('-')[0];
+    });
   }
 
   @override

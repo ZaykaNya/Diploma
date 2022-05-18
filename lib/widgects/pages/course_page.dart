@@ -11,11 +11,13 @@ import 'package:diplom/blocs/userLogs/user_logs_bloc.dart';
 import 'package:diplom/blocs/userLogs/user_logs_state.dart';
 import 'package:diplom/blocs/weekLogs/week_logs_bloc.dart';
 import 'package:diplom/blocs/weekLogs/week_logs_state.dart';
+import 'package:diplom/models/course.dart';
 import 'package:diplom/widgects/profile.dart';
 import 'package:diplom/widgects/rare_achievements_widget.dart';
 import 'package:diplom/widgects/statistic_widjet.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class CoursePage extends StatefulWidget {
@@ -46,10 +48,28 @@ class _CoursePageState extends State<CoursePage> with TickerProviderStateMixin {
 
   @override
   void initState() {
-    fetchCoursesByName(widget.course).then((value) {
-      _branches = value.branches;
-    });
+    initWidgetState();
     super.initState();
+  }
+
+  void initWidgetState() async {
+    final prefs = await SharedPreferences.getInstance();
+
+    final List<String>? branches = prefs.getStringList('${widget.course}CourseBranches');
+
+    if(branches != null) {
+      setState(() {
+        _branches = branches;
+      });
+    } else {
+      Course course = await fetchCoursesByName(widget.course);
+
+      setState(() {
+        _branches = course.branches;
+      });
+
+      await prefs.setStringList('${widget.course}CourseBranches', _branches);
+    }
   }
 
   launchURL(String url) async {

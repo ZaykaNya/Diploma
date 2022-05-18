@@ -13,7 +13,7 @@ class PageChildrenInitial extends PageChildrenState {}
 class PageChildrenLoading extends PageChildrenState {}
 
 class PageChildrenLoaded extends PageChildrenState {
-  final List<Page> children;
+  final List<PageInCourse> children;
   const PageChildrenLoaded(this.children);
 }
 

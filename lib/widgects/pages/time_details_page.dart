@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:ui';
 
 import 'package:intl/intl.dart';
@@ -9,6 +10,7 @@ import 'package:diplom/utils/calculator.dart';
 import 'package:diplom/widgects/profile.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
 
 class TimeDetailsPage extends StatefulWidget {
@@ -38,15 +40,82 @@ class _TimeDetailsPageState extends State<TimeDetailsPage> {
 
   @override
   void initState() {
-    Calculator calculator = Calculator();
-    var now = DateTime.now();
-    var startFrom = now.subtract(Duration(days: now.weekday));
-    _days = List.generate(
-        7, (i) => DateFormat('EEEE').format(startFrom.add(Duration(days: i))));
-    _totalTimeChartData = calculator.countTimeByBranches(
-        widget.userLogs, widget.course.toLowerCase(), widget.branches);
-    _timeChartData = calculator.countTimeForLast7Days(widget.userLogs, widget.course, widget.branches);
+    initWidgetState();
     super.initState();
+  }
+
+  void initWidgetState() async {
+    final prefs = await SharedPreferences.getInstance();
+
+    final String? totalTimeChartDataStr = prefs.getString('${widget.course}TotalTimeChartCourseData');
+    final String? timeChartDataStr = prefs.getString('${widget.course}TimeChartCourseData');
+
+    if(totalTimeChartDataStr != null && timeChartDataStr != null) {
+      List newTotalTimeChartDataFromJSON = jsonDecode(totalTimeChartDataStr);
+
+      List<List<ChartData>> newTimeChartData = [];
+      List<ChartData> newTotalTimeChartData = [];
+
+      for(var data in newTotalTimeChartDataFromJSON) {
+        newTotalTimeChartData.add(
+            ChartData(data['x'], data['y'])
+        );
+      }
+
+      for (var data in jsonDecode(timeChartDataStr)) {
+        List<ChartData> temp = [];
+
+        for (var item in data) {
+          temp.add(ChartData(item['x'], item['y']));
+        }
+
+        newTimeChartData.add(temp);
+      }
+
+      setState(() {
+        _totalTimeChartData = newTotalTimeChartData;
+        _timeChartData = newTimeChartData;
+      });
+    } else {
+      Calculator calculator = Calculator();
+      var now = DateTime.now();
+      var startFrom = now.subtract(Duration(days: now.weekday));
+
+      setState(() {
+        _days = List.generate(
+            7, (i) => DateFormat('EEEE').format(startFrom.add(Duration(days: i))));
+
+        _totalTimeChartData = calculator.countTimeByBranches(
+            widget.userLogs, widget.course.toLowerCase(), widget.branches);
+        _timeChartData = calculator.countTimeForLast7Days(widget.userLogs, widget.course, widget.branches);
+      });
+
+      List totalTimeChartDataForJSON = [];
+      List<List<dynamic>> timeChartDataForJSON = [];
+
+      for(ChartData data in _totalTimeChartData) {
+        totalTimeChartDataForJSON.add({
+          'x': data.x,
+          'y': data.y,
+        });
+      }
+
+      for (var data in _timeChartData) {
+        List temp = [];
+
+        for (var item in data) {
+          temp.add({
+            'x': item.x,
+            'y': item.y,
+          });
+        }
+
+        timeChartDataForJSON.add(temp);
+      }
+
+      await prefs.setString('${widget.course}TotalTimeChartCourseData', jsonEncode(totalTimeChartDataForJSON));
+      await prefs.setString('${widget.course}TimeChartCourseData', jsonEncode(timeChartDataForJSON));
+    }
   }
 
   @override

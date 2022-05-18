@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:ui';
 
 import 'package:diplom/api/courses.dart';
@@ -6,6 +7,7 @@ import 'package:diplom/models/mark.dart';
 import 'package:diplom/utils/calculator.dart';
 import 'package:diplom/widgects/rare_achievement_widget.dart';
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class RareAchievements extends StatefulWidget {
   final String course;
@@ -33,12 +35,37 @@ class _RareAchievementsState extends State<RareAchievements> {
 
   @override
   void initState() {
-    final Calculator calculator = Calculator();
-    List listOfAchievements = calculator.getCourseAchievements(
-        widget.bestMark, widget.course, widget.userLogs, widget.branches, widget.numberOfBranchesChildren);
-    _achievements = listOfAchievements[0];
-    _uncompletedAchievements = listOfAchievements[1];
+    initWidgetState();
     super.initState();
+  }
+
+  void initWidgetState() async {
+    final prefs = await SharedPreferences.getInstance();
+
+    final String? achievementsStr = prefs.getString('${widget.course}CourseAchievements');
+    final String? uncompletedAchievementsStr = prefs.getString('${widget.course}UncompletedCourseAchievements');
+
+    if(achievementsStr != null && uncompletedAchievementsStr != null) {
+      dynamic achievements = jsonDecode(achievementsStr);
+      dynamic uncompletedAchievements = jsonDecode(uncompletedAchievementsStr);
+
+      setState(() {
+        _achievements = achievements;
+        _uncompletedAchievements = uncompletedAchievements;
+      });
+    } else {
+      final Calculator calculator = Calculator();
+      List listOfAchievements = calculator.getCourseAchievements(
+          widget.bestMark, widget.course, widget.userLogs, widget.branches, widget.numberOfBranchesChildren);
+
+      setState(() {
+        _achievements = listOfAchievements[0];
+        _uncompletedAchievements = listOfAchievements[1];
+      });
+
+      await prefs.setString('${widget.course}CourseAchievements', jsonEncode(_achievements));
+      await prefs.setString('${widget.course}UncompletedCourseAchievements', jsonEncode(_uncompletedAchievements));
+    }
   }
 
   @override
