@@ -39,7 +39,7 @@ class RareAchievement extends StatelessWidget {
                             fontWeight: FontWeight.w600,
                             color: Color.fromRGBO(93, 92, 99, 1))),
                     const Padding(padding: EdgeInsets.only(top: 4)),
-                    Text(course,
+                    Text(course.split('-').join(' '),
                         style: const TextStyle(
                             fontSize: 16,
                             fontWeight: FontWeight.w400,

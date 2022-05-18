@@ -47,10 +47,12 @@ class _TimeDetailsPageState extends State<TimeDetailsPage> {
   void initWidgetState() async {
     final prefs = await SharedPreferences.getInstance();
 
+    final bool? timeDetailsPageUserSame = prefs.getBool('${widget.course.toLowerCase()}timeDetailsPageUserSame');
+
     final String? totalTimeChartDataStr = prefs.getString('${widget.course}TotalTimeChartCourseData');
     final String? timeChartDataStr = prefs.getString('${widget.course}TimeChartCourseData');
 
-    if(totalTimeChartDataStr != null && timeChartDataStr != null) {
+    if(totalTimeChartDataStr != null && timeChartDataStr != null && timeDetailsPageUserSame == true) {
       List newTotalTimeChartDataFromJSON = jsonDecode(totalTimeChartDataStr);
 
       List<List<ChartData>> newTimeChartData = [];
@@ -76,18 +78,18 @@ class _TimeDetailsPageState extends State<TimeDetailsPage> {
         _totalTimeChartData = newTotalTimeChartData;
         _timeChartData = newTimeChartData;
       });
-    } else {
+    }
       Calculator calculator = Calculator();
       var now = DateTime.now();
-      var startFrom = now.subtract(Duration(days: now.weekday));
+      var startFrom = now.subtract(Duration(days: 6));
 
       setState(() {
         _days = List.generate(
-            7, (i) => DateFormat('EEEE').format(startFrom.add(Duration(days: i))));
+            7, (i) => DateFormat('EEEE').format(startFrom.add(Duration(days: i)))).reversed.toList();
 
         _totalTimeChartData = calculator.countTimeByBranches(
             widget.userLogs, widget.course.toLowerCase(), widget.branches);
-        _timeChartData = calculator.countTimeForLast7Days(widget.userLogs, widget.course, widget.branches);
+        _timeChartData = calculator.countTimeForLast7Days(widget.userLogs, widget.course, widget.branches).reversed.toList();
       });
 
       List totalTimeChartDataForJSON = [];
@@ -115,7 +117,8 @@ class _TimeDetailsPageState extends State<TimeDetailsPage> {
 
       await prefs.setString('${widget.course}TotalTimeChartCourseData', jsonEncode(totalTimeChartDataForJSON));
       await prefs.setString('${widget.course}TimeChartCourseData', jsonEncode(timeChartDataForJSON));
-    }
+      await prefs.setBool('${widget.course.toLowerCase()}timeDetailsPageUserSame', true);
+
   }
 
   @override

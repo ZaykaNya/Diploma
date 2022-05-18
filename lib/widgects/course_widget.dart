@@ -57,6 +57,8 @@ class _CourseWidgetState extends State<CourseWidget> {
   void initPageState(branches) async {
     final prefs = await SharedPreferences.getInstance();
 
+    final bool? courseWidgetUserSame = prefs.getBool('${widget.course.toLowerCase()}courseWidgetUserSame');
+
     final String? numberOfBranchesChildrenFromCache = prefs.getString('${widget.course}ChartTestsDurationDataCompare');
     final int? progressFromCache = prefs.getInt('${widget.course}Progress');
     final double? timeFromCache = prefs.getDouble('${widget.course}Time');
@@ -67,7 +69,8 @@ class _CourseWidgetState extends State<CourseWidget> {
         progressFromCache != null &&
         timeFromCache != null &&
         branchesFromCache != null &&
-        branchCaptionsFromCache != null) {
+        branchCaptionsFromCache != null &&
+        courseWidgetUserSame == true) {
       List<List<dynamic>> newNumberOfBranchesChildren = [];
 
       for (var data in jsonDecode(numberOfBranchesChildrenFromCache)) {
@@ -130,6 +133,7 @@ class _CourseWidgetState extends State<CourseWidget> {
       await prefs.setStringList('${widget.course}Branches', _branches);
       await prefs.setStringList(
           '${widget.course}BranchCaptions', _branchCaptions);
+      await prefs.setBool('${widget.course.toLowerCase()}courseWidgetUserSame', true);
     }
   }
 
@@ -180,7 +184,7 @@ class _CourseWidgetState extends State<CourseWidget> {
                   mainAxisAlignment: MainAxisAlignment.start,
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(widget.course.capitalize(),
+                    Text(widget.course.split('-').join(' ').capitalize(),
                         style: const TextStyle(
                             fontSize: 20,
                             fontWeight: FontWeight.w600,

@@ -55,9 +55,11 @@ class _CoursePageState extends State<CoursePage> with TickerProviderStateMixin {
   void initWidgetState() async {
     final prefs = await SharedPreferences.getInstance();
 
+    final bool? coursePageUserSame = prefs.getBool('${widget.course.toLowerCase()}coursePageUserSame');
+
     final List<String>? branches = prefs.getStringList('${widget.course}CourseBranches');
 
-    if(branches != null) {
+    if(branches != null && coursePageUserSame == true) {
       setState(() {
         _branches = branches;
       });
@@ -68,6 +70,7 @@ class _CoursePageState extends State<CoursePage> with TickerProviderStateMixin {
         _branches = course.branches;
       });
 
+      await prefs.setBool('${widget.course.toLowerCase()}coursePageUserSame', true);
       await prefs.setStringList('${widget.course}CourseBranches', _branches);
     }
   }
@@ -88,7 +91,7 @@ class _CoursePageState extends State<CoursePage> with TickerProviderStateMixin {
         centerTitle: true,
         backgroundColor: const Color.fromRGBO(80, 71, 153, 1),
         toolbarHeight: 54,
-        title: Text(widget.course,
+        title: Text(widget.course.split('-').join(' '),
             style: const TextStyle(fontSize: 24, fontWeight: FontWeight.w600)),
       ),
       backgroundColor: Colors.white,

@@ -66,6 +66,8 @@ class _HistoryState extends State<History> with TickerProviderStateMixin {
   void initPageState(courses) async {
     final prefs = await SharedPreferences.getInstance();
 
+    final bool? historyWidgetUserSame = prefs.getBool('historyWidgetUserSame');
+
     final String? chartTimeDataCompareStr = prefs.getString('chartTimeDataCompare');
     final String? testsTimeWordStr = prefs.getString('testsTimeWord');
     final String? testsTimeStr = prefs.getString('testsTime');
@@ -78,7 +80,7 @@ class _HistoryState extends State<History> with TickerProviderStateMixin {
 
     if(chartTimeDataCompareStr != null && testsTimeWordStr != null && testsTimeStr != null && chartTestsResultsDataCompareStr != null
         && testsPercentageWordStr != null && testsPercentageStr != null && chartTestsDurationDataCompareStr != null && courseTimeWordStr != null
-        && courseTimeStr != null) {
+        && courseTimeStr != null && historyWidgetUserSame == true) {
       List newChartTimeDataCompareFromJSON = jsonDecode(chartTimeDataCompareStr);
       List newChartTestsResultsDataCompareFromJSON = jsonDecode(chartTestsResultsDataCompareStr);
       List newChartTestsDurationDataCompareFromJSON = jsonDecode(chartTestsDurationDataCompareStr);
@@ -109,7 +111,7 @@ class _HistoryState extends State<History> with TickerProviderStateMixin {
         _chartTimeDataCompare = newChartTimeDataCompare;
         _courseTime = courseTimeStr;
         _courseTimeWord = courseTimeWordStr;
-        _chartTestsResultsDataCompare = newChartTimeDataCompare;
+        _chartTestsResultsDataCompare = newChartTestsResultsDataCompare;
         _testsPercentage = testsPercentageStr;
         _testsPercentageWord = testsPercentageWordStr;
         _chartTestsDurationDataCompare = newChartTestsDurationDataCompare;
@@ -187,6 +189,7 @@ class _HistoryState extends State<History> with TickerProviderStateMixin {
       await prefs.setString('chartTestsDurationDataCompare', jsonEncode(chartTestsDurationDataCompareForJSON));
       await prefs.setString('courseTimeWord', _courseTimeWord);
       await prefs.setString('courseTime', _courseTime);
+      await prefs.setBool('historyWidgetUserSame', true);
     }
   }
 
@@ -249,7 +252,7 @@ class _HistoryState extends State<History> with TickerProviderStateMixin {
                       const TextSpan(text: ' minutes '),
                       TextSpan(text: _courseTimeWord),
                       const TextSpan(
-                          text: ' on course. You`re test results are '),
+                          text: ' on course. Your test results are '),
                       TextSpan(text: _testsPercentageWord),
                       const TextSpan(text: ' by '),
                       TextSpan(
@@ -307,7 +310,7 @@ class _HistoryState extends State<History> with TickerProviderStateMixin {
                             height: 16,
                             color: const Color.fromRGBO(56, 179, 158, 1),
                           ),
-                          const Text('  - you`re time spent on course in hours',
+                          const Text('  - your time spent on course in hours',
                               style: TextStyle(
                                   color: Color.fromRGBO(93, 92, 99, 1))),
                         ],
@@ -330,7 +333,7 @@ class _HistoryState extends State<History> with TickerProviderStateMixin {
                   )),
               const Padding(
                   padding: EdgeInsets.fromLTRB(16, 24, 16, 8),
-                  child: Text("You`re and others tests results",
+                  child: Text("Your and others tests results",
                       style: TextStyle(
                           fontSize: 20,
                           fontWeight: FontWeight.w700,
@@ -365,7 +368,7 @@ class _HistoryState extends State<History> with TickerProviderStateMixin {
                             height: 16,
                             color: const Color.fromRGBO(56, 179, 158, 1),
                           ),
-                          const Text('  - you`re test result',
+                          const Text('  - your test result',
                               style: TextStyle(
                                   color: Color.fromRGBO(93, 92, 99, 1))),
                         ],
@@ -387,7 +390,7 @@ class _HistoryState extends State<History> with TickerProviderStateMixin {
                   )),
               const Padding(
                   padding: EdgeInsets.fromLTRB(16, 24, 16, 8),
-                  child: Text("You`re and others tests duration",
+                  child: Text("Your and others tests duration",
                       style: TextStyle(
                           fontSize: 20,
                           fontWeight: FontWeight.w700,
@@ -422,7 +425,7 @@ class _HistoryState extends State<History> with TickerProviderStateMixin {
                             height: 16,
                             color: const Color.fromRGBO(56, 179, 158, 1),
                           ),
-                          const Text('  - you`re test duration',
+                          const Text('  - your test duration',
                               style: TextStyle(
                                   color: Color.fromRGBO(93, 92, 99, 1))),
                         ],

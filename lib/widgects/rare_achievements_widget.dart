@@ -42,10 +42,12 @@ class _RareAchievementsState extends State<RareAchievements> {
   void initWidgetState() async {
     final prefs = await SharedPreferences.getInstance();
 
+    final bool? rareAchievementsUserSame = prefs.getBool('${widget.course.toLowerCase()}rareAchievementsUserSame');
+
     final String? achievementsStr = prefs.getString('${widget.course}CourseAchievements');
     final String? uncompletedAchievementsStr = prefs.getString('${widget.course}UncompletedCourseAchievements');
 
-    if(achievementsStr != null && uncompletedAchievementsStr != null) {
+    if(achievementsStr != null && uncompletedAchievementsStr != null && rareAchievementsUserSame == true) {
       dynamic achievements = jsonDecode(achievementsStr);
       dynamic uncompletedAchievements = jsonDecode(uncompletedAchievementsStr);
 
@@ -65,6 +67,7 @@ class _RareAchievementsState extends State<RareAchievements> {
 
       await prefs.setString('${widget.course}CourseAchievements', jsonEncode(_achievements));
       await prefs.setString('${widget.course}UncompletedCourseAchievements', jsonEncode(_uncompletedAchievements));
+      await prefs.setBool('${widget.course.toLowerCase()}rareAchievementsUserSame', true);
     }
   }
 

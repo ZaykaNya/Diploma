@@ -32,12 +32,14 @@ class _AverageDashboardState extends State<AverageDashboard> {
   void initWidgetState() async {
     final prefs = await SharedPreferences.getInstance();
 
+    final bool? averageDashboardUserSame = prefs.getBool('averageDashboardUserSame');
+
     final double? weeklyProgress = prefs.getDouble('weeklyProgress');
     final int? completedCourses = prefs.getInt('completedCourses');
     final int? inProgressCourses = prefs.getInt('inProgressCourses');
     final String? message = prefs.getString('message');
 
-    if(weeklyProgress != null && completedCourses != null && inProgressCourses != null && message != null) {
+    if(weeklyProgress != null && completedCourses != null && inProgressCourses != null && message != null && averageDashboardUserSame == true) {
       setState(() {
         _weeklyProgress = weeklyProgress;
         _completedCourses = completedCourses;
@@ -59,6 +61,7 @@ class _AverageDashboardState extends State<AverageDashboard> {
       await prefs.setInt('completedCourses', _completedCourses);
       await prefs.setInt('inProgressCourses', _inProgressCourses);
       await prefs.setString('message', _message);
+      await prefs.setBool('averageDashboardUserSame', true);
     }
   }
 

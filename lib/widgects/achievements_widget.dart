@@ -34,10 +34,12 @@ class _AchievementsState extends State<Achievements> {
   void initWidgetState() async {
     final prefs = await SharedPreferences.getInstance();
 
+    final bool? achievementsUserSame = prefs.getBool('achievementsUserSame');
+
     final String? achievementsStr = prefs.getString('achievements');
     final String? uncompletedAchievementsStr = prefs.getString('uncompletedAchievements');
 
-    if(achievementsStr != null && uncompletedAchievementsStr != null) {
+    if(achievementsStr != null && uncompletedAchievementsStr != null && achievementsUserSame == true) {
       dynamic achievements = jsonDecode(achievementsStr);
       dynamic uncompletedAchievements = jsonDecode(uncompletedAchievementsStr);
 
@@ -57,6 +59,7 @@ class _AchievementsState extends State<Achievements> {
 
       await prefs.setString('achievements', jsonEncode(_achievements));
       await prefs.setString('uncompletedAchievements', jsonEncode(_uncompletedAchievements));
+      await prefs.setBool('achievementsUserSame', true);
     }
   }
 

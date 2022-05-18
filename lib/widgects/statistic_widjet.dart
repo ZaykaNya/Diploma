@@ -58,10 +58,12 @@ class _StatisticWidgetState extends State<StatisticWidget> {
   void initWidgetState() async {
     final prefs = await SharedPreferences.getInstance();
 
+    final bool? statisticWidgetUserSame = prefs.getBool('${widget.course.toLowerCase()}statisticWidgetUserSame');
+
     final String? timeChartDataStr = prefs.getString('${widget.course}CourseTimeChartData');
     final String? testChartDataStr = prefs.getString('${widget.course}CourseTestChartData');
 
-    if(timeChartDataStr != null && testChartDataStr != null) {
+    if(timeChartDataStr != null && testChartDataStr != null && statisticWidgetUserSame == true) {
       List newTimeChartDataFromJSON = jsonDecode(timeChartDataStr);
       List newTestsChartDataFromJSON = jsonDecode(testChartDataStr);
 
@@ -113,6 +115,7 @@ class _StatisticWidgetState extends State<StatisticWidget> {
 
       await prefs.setString('${widget.course}CourseTimeChartData', jsonEncode(timeChartDataCompareForJSON));
       await prefs.setString('${widget.course}CourseTestChartData', jsonEncode(testsChartResultsDataCompareForJSON));
+      await prefs.setBool('${widget.course.toLowerCase()}statisticWidgetUserSame', true);
     }
   }
 
