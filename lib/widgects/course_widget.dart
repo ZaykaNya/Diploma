@@ -53,6 +53,7 @@ class _CourseWidgetState extends State<CourseWidget> {
   List<String> _branches = [];
   List<String> _branchCaptions = [];
   List<List<dynamic>> _numberOfBranchesChildren = [];
+  bool _loaded = false;
 
   void initPageState(branches) async {
     final prefs = await SharedPreferences.getInstance();
@@ -89,6 +90,7 @@ class _CourseWidgetState extends State<CourseWidget> {
         _time = timeFromCache;
         _branches = branchesFromCache;
         _numberOfBranchesChildren = newNumberOfBranchesChildren;
+        _loaded = true;
       });
     } else {
       List<String> pagesNames = [];
