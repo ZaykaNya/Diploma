@@ -476,7 +476,7 @@ class Calculator {
     int index = 0;
 
     for (var course in courses) {
-      // if (course['active'] == '1') {
+      if (course['active'] == '1') {
         double userTime = 0;
         double averageTime = 0;
 
@@ -493,7 +493,7 @@ class Calculator {
       }
 
       index++;
-    // }
+    }
 
     if(courseCounter > 0) {
       userAverageTime /= courseCounter;
@@ -520,7 +520,7 @@ class Calculator {
     int index = 0;
 
     for (var course in courses) {
-      // if (course['active'] == '1') {
+      if (course['active'] == '1') {
         double averageTestsResult = getAverageTestsResult(courseTests[index]);
         double bestMark = 0;
 
@@ -539,7 +539,7 @@ class Calculator {
 
         chartData.add(ChartDataCompare(course['course'].split('-')[0],
             averageTestsResult, bestMark));
-      // }
+      }
 
         index++;
     }
@@ -569,7 +569,7 @@ class Calculator {
     int index = 0;
 
     for (var course in courses) {
-      // if (course['active'] == '1') {
+      if (course['active'] == '1') {
         double averageTestsResult = getAverageTestsDuration(courseTests[index], course['course'].split('-')[0]);
         double averageUserTestsResult = getAverageTestsDuration(userTests, course['course'].split('-')[0]);
 
@@ -579,7 +579,7 @@ class Calculator {
 
         chartData.add(ChartDataCompare(course['course'].split('-')[0],
             averageTestsResult, averageUserTestsResult));
-      // }
+      }
 
       index++;
     }

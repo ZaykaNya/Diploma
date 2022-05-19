@@ -14,6 +14,7 @@ import 'package:diplom/blocs/userBestMark/user_best_mark_event.dart';
 import 'package:diplom/blocs/weekLogs/week_logs_bloc.dart';
 import 'package:diplom/blocs/weekLogs/week_logs_event.dart';
 import 'package:diplom/models/branch.dart';
+import 'package:diplom/models/course.dart';
 import 'package:diplom/models/log.dart';
 import 'package:diplom/utils/calculator.dart';
 import 'package:diplom/widgects/pages/course_page.dart';
@@ -47,13 +48,15 @@ class CourseWidget extends StatefulWidget {
   State<CourseWidget> createState() => _CourseWidgetState();
 }
 
-class _CourseWidgetState extends State<CourseWidget> {
+class _CourseWidgetState extends State<CourseWidget> with TickerProviderStateMixin {
+  bool _loaded = false;
+  late AnimationController controller;
   int _progress = 0;
   double _time = 0;
   List<String> _branches = [];
   List<String> _branchCaptions = [];
   List<List<dynamic>> _numberOfBranchesChildren = [];
-  bool _loaded = false;
+  bool _imageLoaded = false;
 
   void initPageState(branches) async {
     final prefs = await SharedPreferences.getInstance();
@@ -91,6 +94,7 @@ class _CourseWidgetState extends State<CourseWidget> {
         _branches = branchesFromCache;
         _numberOfBranchesChildren = newNumberOfBranchesChildren;
         _loaded = true;
+        _imageLoaded = true;
       });
     } else {
       List<String> pagesNames = [];
@@ -111,6 +115,8 @@ class _CourseWidgetState extends State<CourseWidget> {
         _time = calculator.countTime(widget.userLogs, widget.course);
         _branches = branches;
         _numberOfBranchesChildren = numberOfBranchesChildren;
+        _loaded = true;
+        _imageLoaded = true;
       });
 
       List<List<dynamic>> numberOfBranchesChildrenToJSON = [];
@@ -139,12 +145,27 @@ class _CourseWidgetState extends State<CourseWidget> {
     }
   }
 
+  void initCourse(courseName) async {
+    Course course = await fetchCoursesByName(courseName);
+    initPageState(course.branches);
+  }
+
   @override
   void initState() {
-    fetchCoursesByName(widget.course).then((value) {
-      initPageState(value.branches);
+    controller = AnimationController(
+      vsync: this,
+      duration: const Duration(seconds: 1),
+    )..addListener(() {
+      setState(() {});
     });
+    initCourse(widget.course);
     super.initState();
+  }
+
+  @override
+  void dispose() {
+    controller.dispose();
+    super.dispose();
   }
 
   @override
@@ -152,130 +173,157 @@ class _CourseWidgetState extends State<CourseWidget> {
     final userWeekLogsBloc = BlocProvider.of<WeekLogsBloc>(context);
     final userBestMarkBloc = BlocProvider.of<UserBestMarkBloc>(context);
     final courseTestsBloc = BlocProvider.of<CourseTestsBloc>(context);
-    widget.courseBloc.add(GetCourse(course: widget.course));
-    return OutlinedButton(
-      style: OutlinedButton.styleFrom(
-        padding: const EdgeInsets.all(0),
-        primary: Colors.white,
-        shadowColor: Colors.white,
-        side: const BorderSide(color: Colors.white, width: 0),
-      ),
-      child: Column(
-        children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.start,
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              BlocBuilder<CourseBloc, CourseState>(
-                  builder: (context, courseState) {
-                if (courseState is CourseLoaded) {
-                  final String image =
-                      'http://semantic-portal.net/images/${courseState.course.course.image}';
-                  if (courseState.course.course.image != "") {
-                    return Image.network(image, height: 103, width: 103);
-                  } else {
-                    return Image.asset('assets/images/react_icon.png');
-                  }
-                } else {
-                  return Container();
-                }
-              }),
-              const Padding(padding: EdgeInsets.only(right: 16)),
-              Expanded(
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(widget.course.split('-').join(' ').capitalize(),
-                        style: const TextStyle(
-                            fontSize: 20,
-                            fontWeight: FontWeight.w600,
-                            color: Color.fromRGBO(93, 92, 99, 1))),
-                    const Padding(padding: EdgeInsets.only(top: 4)),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        RichText(
-                          text: TextSpan(
-                            style: const TextStyle(
-                                fontSize: 16,
-                                height: 1.5,
-                                fontWeight: FontWeight.w400,
-                                color: Color.fromRGBO(140, 138, 149, 1)),
-                            children: [
-                              WidgetSpan(
-                                child: Padding(
-                                  padding:
-                                      const EdgeInsets.fromLTRB(0, 0, 6, 0),
-                                  child: Image.asset(
-                                      'assets/images/star_icon.png'),
+    if(_imageLoaded == false) {
+      widget.courseBloc.add(GetCourse(course: widget.course));
+    }
+    if(!_loaded) {
+      return Container(
+        height: 68,
+        alignment: Alignment.center,
+        margin: const EdgeInsets.only(top: 0),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: <Widget>[
+            CircularProgressIndicator(
+              value: controller.value,
+            ),
+            const Padding(padding: EdgeInsets.only(top: 8)),
+            const Text(
+              'Loading...',
+              style: TextStyle(
+                  fontSize: 20,
+                  fontWeight: FontWeight.w700,
+                  color: Color.fromRGBO(93, 92, 99, 1)),
+            ),
+          ],
+        ),
+      );
+    } else {
+      return OutlinedButton(
+        style: OutlinedButton.styleFrom(
+          padding: const EdgeInsets.all(0),
+          primary: Colors.white,
+          shadowColor: Colors.white,
+          side: const BorderSide(color: Colors.white, width: 0),
+        ),
+        child: Column(
+          children: [
+            Row(
+              mainAxisAlignment: MainAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                BlocBuilder<CourseBloc, CourseState>(
+                    builder: (context, courseState) {
+                      if (courseState is CourseLoaded) {
+                        final String image =
+                            'http://semantic-portal.net/images/${courseState.course.course.image}';
+                        if (courseState.course.course.image != "") {
+                          return Image.network(image, height: 103, width: 103);
+                        } else {
+                          return Image.asset('assets/images/react_icon.png');
+                        }
+                      } else {
+                        return Container();
+                      }
+                    }),
+                const Padding(padding: EdgeInsets.only(right: 16)),
+                Expanded(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(widget.course.split('-').join(' ').capitalize(),
+                          style: const TextStyle(
+                              fontSize: 20,
+                              fontWeight: FontWeight.w600,
+                              color: Color.fromRGBO(93, 92, 99, 1))),
+                      const Padding(padding: EdgeInsets.only(top: 4)),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          RichText(
+                            text: TextSpan(
+                              style: const TextStyle(
+                                  fontSize: 16,
+                                  height: 1.5,
+                                  fontWeight: FontWeight.w400,
+                                  color: Color.fromRGBO(140, 138, 149, 1)),
+                              children: [
+                                WidgetSpan(
+                                  child: Padding(
+                                    padding:
+                                    const EdgeInsets.fromLTRB(0, 0, 6, 0),
+                                    child: Image.asset(
+                                        'assets/images/star_icon.png'),
+                                  ),
                                 ),
-                              ),
-                              TextSpan(text: '$_progress %'),
-                            ],
+                                TextSpan(text: '$_progress %'),
+                              ],
+                            ),
                           ),
-                        ),
-                        const Padding(padding: EdgeInsets.only(right: 60)),
-                        RichText(
-                          text: TextSpan(
-                            style: const TextStyle(
-                                fontSize: 16,
-                                height: 1.5,
-                                fontWeight: FontWeight.w400,
-                                color: Color.fromRGBO(140, 138, 149, 1)),
-                            children: [
-                              WidgetSpan(
-                                child: Padding(
-                                  padding:
-                                      const EdgeInsets.fromLTRB(0, 0, 6, 0),
-                                  child: Image.asset(
-                                      'assets/images/alarm_clock_icon.png'),
+                          const Padding(padding: EdgeInsets.only(right: 60)),
+                          RichText(
+                            text: TextSpan(
+                              style: const TextStyle(
+                                  fontSize: 16,
+                                  height: 1.5,
+                                  fontWeight: FontWeight.w400,
+                                  color: Color.fromRGBO(140, 138, 149, 1)),
+                              children: [
+                                WidgetSpan(
+                                  child: Padding(
+                                    padding:
+                                    const EdgeInsets.fromLTRB(0, 0, 6, 0),
+                                    child: Image.asset(
+                                        'assets/images/alarm_clock_icon.png'),
+                                  ),
                                 ),
-                              ),
-                              TextSpan(text: "$_time h."),
-                            ],
+                                TextSpan(text: "$_time h."),
+                              ],
+                            ),
                           ),
-                        ),
-                      ],
-                    ),
-                  ],
+                        ],
+                      ),
+                    ],
+                  ),
                 ),
-              ),
-            ],
-          ),
-          const Padding(padding: EdgeInsets.only(top: 16)),
-          const Divider(
-            height: 2,
-            thickness: 2,
-            indent: 8,
-            endIndent: 8,
-            color: Color.fromRGBO(235, 235, 235, 1),
-          ),
-          const Padding(padding: EdgeInsets.only(top: 16)),
-        ],
-      ),
-      onPressed: () {
-        DateTime weekAgo = DateTime.now().subtract(const Duration(days: 6));
-        userWeekLogsBloc.add(GetWeekLogs(
-            id: widget.userId,
-            time: '${weekAgo.year}-${weekAgo.month}-${weekAgo.day}'));
-        userBestMarkBloc
-            .add(GetUserBestMark(id: widget.userId, course: widget.course));
-        courseTestsBloc.add(GetCourseTests(course: widget.course));
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-              builder: (context) => CoursePage(
-                    course: widget.course.capitalize(),
-                    courseProgress: _progress,
-                    timeSpent: _time,
-                    branches: _branches,
-                    branchCaptions: _branchCaptions,
-                    numberOfBranchesChildren: _numberOfBranchesChildren,
-                  )),
-        );
-      },
-    );
+              ],
+            ),
+            const Padding(padding: EdgeInsets.only(top: 16)),
+            const Divider(
+              height: 2,
+              thickness: 2,
+              indent: 8,
+              endIndent: 8,
+              color: Color.fromRGBO(235, 235, 235, 1),
+            ),
+            const Padding(padding: EdgeInsets.only(top: 16)),
+          ],
+        ),
+        onPressed: () {
+          DateTime weekAgo = DateTime.now().subtract(const Duration(days: 6));
+          userWeekLogsBloc.add(GetWeekLogs(
+              id: widget.userId,
+              time: '${weekAgo.year}-${weekAgo.month}-${weekAgo.day}'));
+          userBestMarkBloc
+              .add(GetUserBestMark(id: widget.userId, course: widget.course));
+          courseTestsBloc.add(GetCourseTests(course: widget.course));
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+                builder: (context) => CoursePage(
+                  course: widget.course.capitalize(),
+                  courseProgress: _progress,
+                  timeSpent: _time,
+                  branches: _branches,
+                  branchCaptions: _branchCaptions,
+                  numberOfBranchesChildren: _numberOfBranchesChildren,
+                )),
+          );
+        },
+      );
+    }
   }
 }

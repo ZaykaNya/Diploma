@@ -1,5 +1,6 @@
 import 'dart:ui';
 
+import 'package:diplom/api/logs.dart';
 import 'package:diplom/api/users.dart';
 import 'package:diplom/authentication/authentication.dart';
 import 'package:diplom/authentication/authentication_bloc.dart';
@@ -15,6 +16,7 @@ import 'package:diplom/blocs/userLogs/user_logs_event.dart';
 import 'package:diplom/blocs/userLogs/user_logs_state.dart';
 import 'package:diplom/blocs/userTests/user_tests_bloc.dart';
 import 'package:diplom/blocs/userTests/user_tests_state.dart';
+import 'package:diplom/models/log.dart';
 import 'package:diplom/models/user.dart';
 import 'package:diplom/navigation/constants/nav_bar_items.dart';
 import 'package:diplom/navigation/navigation_cubit.dart';
@@ -45,6 +47,10 @@ class _StatisticPageState extends State<StatisticPage> {
     setState(() {
       _selectedIndex = index;
     });
+
+    if(index == 0) {
+      initWidgetState();
+    }
   }
 
   @override
@@ -56,8 +62,11 @@ class _StatisticPageState extends State<StatisticPage> {
   void initWidgetState() async {
     final prefs = await SharedPreferences.getInstance();
     final String? userId = prefs.getString('userId');
+    final int? allLogsLength = prefs.getInt('allLogsLength');
 
-    if(userId != widget.userId) {
+    List<UserLog> allLogs = await fetchAllLogs();
+
+    if(userId != widget.userId || allLogs.length != allLogsLength) {
       User user = await fetchUserDetailsById(widget.userId);
 
       for(var course in user.courses) {
@@ -72,6 +81,8 @@ class _StatisticPageState extends State<StatisticPage> {
       await prefs.setBool('averageDashboardUserSame', false);
       await prefs.setBool('achievementsUserSame', false);
       await prefs.setBool('historyWidgetUserSame', false);
+      await prefs.setInt('allLogsLength', allLogs.length);
+
 
       setState(() {
         _pageLoaded = true;
