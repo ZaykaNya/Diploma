@@ -1,5 +1,6 @@
 import 'dart:ui';
 
+import 'package:intl/intl.dart';
 import 'package:diplom/api/logs.dart';
 import 'package:diplom/api/users.dart';
 import 'package:diplom/authentication/authentication.dart';
@@ -62,11 +63,19 @@ class _StatisticPageState extends State<StatisticPage> {
   void initWidgetState() async {
     final prefs = await SharedPreferences.getInstance();
     final String? userId = prefs.getString('userId');
-    final int? allLogsLength = prefs.getInt('allLogsLength');
+    final String? lastLogTime = prefs.getString('lastLogTime');
 
-    List<UserLog> allLogs = await fetchAllLogs();
+    List<UserLog> newLogs = [];
 
-    if(userId != widget.userId || allLogs.length != allLogsLength) {
+    if(lastLogTime != null) {
+      newLogs = await fetchLogsFromTime(lastLogTime);
+    } else {
+      newLogs = await fetchLogsFromTime('2015-01-01 00:00:00');
+    }
+
+    print(newLogs.length);
+
+    if(userId != widget.userId || newLogs.length > 0) {
       User user = await fetchUserDetailsById(widget.userId);
 
       for(var course in user.courses) {
@@ -77,12 +86,14 @@ class _StatisticPageState extends State<StatisticPage> {
         await prefs.setBool('${course['course'].toLowerCase()}courseWidgetUserSame', false);
       }
 
+      DateTime timeOfLastLog = DateTime.parse('${newLogs.last.time}').add(const Duration(seconds: 1));
+      String lastLogTimeToCache = DateFormat("yyyy-MM-dd HH:mm:ss").format(timeOfLastLog);
+
       await prefs.setString('userId', widget.userId);
       await prefs.setBool('averageDashboardUserSame', false);
       await prefs.setBool('achievementsUserSame', false);
       await prefs.setBool('historyWidgetUserSame', false);
-      await prefs.setInt('allLogsLength', allLogs.length);
-
+      await prefs.setString('lastLogTime', lastLogTimeToCache);
 
       setState(() {
         _pageLoaded = true;
