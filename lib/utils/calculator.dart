@@ -137,6 +137,8 @@ class Calculator {
       progress += int.parse(userLog.seconds.toString());
     }
 
+    print(progress);
+
     progress /= 108;
 
     if (progress > 100) {

@@ -1,5 +1,6 @@
 import 'dart:ui';
 
+import 'package:diplom/blocs/userTests/user_tests_event.dart';
 import 'package:intl/intl.dart';
 import 'package:diplom/api/logs.dart';
 import 'package:diplom/api/users.dart';
@@ -64,6 +65,8 @@ class _StatisticPageState extends State<StatisticPage> {
     final prefs = await SharedPreferences.getInstance();
     final String? userId = prefs.getString('userId');
     final String? lastLogTime = prefs.getString('lastLogTime');
+    final int? lastDay = prefs.getInt('lastDay');
+    final currentDay = DateTime.now().day;
 
     List<UserLog> newLogs = [];
 
@@ -72,8 +75,6 @@ class _StatisticPageState extends State<StatisticPage> {
     } else {
       newLogs = await fetchLogsFromTime('2015-01-01 00:00:00');
     }
-
-    print(newLogs.length);
 
     if(userId != widget.userId || newLogs.length > 0) {
       User user = await fetchUserDetailsById(widget.userId);
@@ -94,6 +95,24 @@ class _StatisticPageState extends State<StatisticPage> {
       await prefs.setBool('achievementsUserSame', false);
       await prefs.setBool('historyWidgetUserSame', false);
       await prefs.setString('lastLogTime', lastLogTimeToCache);
+      await prefs.setInt('lastDay', currentDay);
+
+      setState(() {
+        _pageLoaded = true;
+        _selectedIndex = 0;
+      });
+    } else if(currentDay != lastDay) {
+      User user = await fetchUserDetailsById(widget.userId);
+
+      for(var course in user.courses) {
+        await prefs.setBool('${course['course'].toLowerCase()}timeDetailsPageUserSame', false);
+        await prefs.setBool('${course['course'].toLowerCase()}coursePageUserSame', false);
+        await prefs.setBool('${course['course'].toLowerCase()}statisticWidgetUserSame', false);
+        await prefs.setBool('${course['course'].toLowerCase()}courseWidgetUserSame', false);
+      }
+
+      await prefs.setBool('averageDashboardUserSame', false);
+      await prefs.setInt('lastDay', currentDay);
 
       setState(() {
         _pageLoaded = true;
@@ -111,6 +130,7 @@ class _StatisticPageState extends State<StatisticPage> {
   Widget build(BuildContext context) {
     final logsBloc = BlocProvider.of<LogsBloc>(context);
     final userLogsBloc = BlocProvider.of<UserLogsBloc>(context);
+    final userTestsBloc = BlocProvider.of<UserTestsBloc>(context);
     if(_selectedIndex == 0) {
       BlocProvider.of<NavigationCubit>(context)
           .getNavBarItem(NavbarItem.statistics);
@@ -328,6 +348,7 @@ class _StatisticPageState extends State<StatisticPage> {
                   id: widget.userId,
                   time: '${weekAgo.year}-${weekAgo.month}-${weekAgo.day}'));
               userLogsBloc.add(GetUserLogs(id: widget.userId));
+              userTestsBloc.add(GetUserTests(id: widget.userId));
               _onItemTapped(index);
               if (index == 0) {
                 BlocProvider.of<NavigationCubit>(context)
